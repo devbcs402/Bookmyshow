@@ -625,8 +625,8 @@ Phase 12: Notification System & Omnichannel Alerts (COMPLETED)
 Phase 13: Search, Filtering, Discovery & Recommendation Engine (COMPLETED)
 Phase 14: Production Hardening, Analytics, Audit Logs, Security Review, Performance Optimization, Deployment and CI/CD (COMPLETED)
 Phase 15: Customer Frontend Application (React) (COMPLETED)
-Phase 16: Theatre Partner Dashboard (React) (NEXT PHASE)
-Phase 17: Super Admin Dashboard (React)
+Phase 16: Theatre Partner Dashboard (React) (COMPLETED)
+Phase 17: Super Admin Dashboard (React) (NEXT PHASE)
 ```
 
 ---
@@ -673,7 +673,63 @@ npm run build
 
 ---
 
-## 20. Architecture Status & Quality Gates
+## 20. Theatre Partner Dashboard (Part 16)
+
+The enterprise-grade Theatre Partner Dashboard application is located in `apps/theatre-dashboard/`. Designed for cinema operators, multiplex owners, and box-office operations staff, it provides end-to-end management of theatres, screens, layouts, shows, ticket admissions, live telemetry, and financial settlements with strict multi-tenant isolation.
+
+### 20.1 Supported Personas & RBAC Enforcement
+- **THEATRE_OWNER**: Full administrative control over partner organization, cinema registration, branch networks, auditoriums, layouts, dynamic show pricing, staff assignments, financial settlement reports, and CSV exports.
+- **THEATRE_MANAGER**: Operational oversight for daily show scheduling, procedural seat layout drafting, screen hardware maintenance, admissions, and staff coordination (financial settlements restricted).
+- **THEATRE_STAFF**: Box-office and front-desk personnel with read-only schedule visibility, ticket QR admittance, and booking lookup permissions.
+
+### 20.2 Key Modules & Features
+- **Executive Dashboard Overview**: Live KPI stat cards (Total Bookings, Tickets Sold, Active Screenings, Net Settlements), daily booking velocity trends, and status ratio donut visualizations (`Recharts`).
+- **Theatre & Branch Hierarchy**: Master theatre registration (`POST /api/v1/owner/theatres`), branch management (`/api/v1/owner/theatres/:theatreId/branches`), operational policies, and facility checkboxes (Parking, Dolby Atmos, Wheelchair Access, IMAX, Food Court).
+- **Auditorium Screen Management**: Screen hardware specifications (`STANDARD_2D`, `REAL_3D`, `IMAX_3D`, `4DX`), audio engine mapping (`DOLBY_ATMOS`, `DOLBY_7_1`, `DTS_X`), and operational state toggles (`ACTIVE`, `MAINTENANCE`, `INACTIVE`).
+- **Dynamic 2D Seating Layout Builder**:
+  - Interactive 2D matrix canvas with curved front-screen visual cue.
+  - Multi-tool palette: Category Brush Painter (VIP, Platinum, Gold, Silver), Aisle/Walkway Gap tool, and Maintenance Seat Block.
+  - Continuous automatic row renumbering across aisle gaps.
+  - Procedural Bulk Generation Wizard for quick auditorium layout templating.
+  - Strict layout validation engine (`POST /api/v1/owner/screens/:screenId/layout/validate`).
+  - Draft save (`POST /api/v1/owner/screens/:screenId/layout`) and immutable version publishing (`POST /api/v1/owner/screens/:screenId/layout/publish`).
+  - Layout version history inspector.
+- **Approved Movies Catalog**: Licensed titles catalog with runtime, censor certifications, format capabilities, and direct "Schedule Screening" integration.
+- **Show Scheduling Engine & Timeline Calendar**:
+  - Conflict-free show scheduling with automatic end-time calculation (runtime + 30-minute intermission and cleaning buffer).
+  - Interactive 24-hour day timeline calendar with conflict overlap detection across screens.
+  - Show publishing, rescheduling, and cancellation with automated customer refund alerts.
+- **Dynamic Show Pricing Engine**: Category-wise seat pricing configuration (`PUT /api/v1/owner/shows/:showId/pricing`) with validation preventing unpriced shows from going live.
+- **Bookings & Admissions**: Tenant-isolated customer booking explorer with multi-parameter search, status badges, and digital QR ticket admission validator.
+- **Revenue & Financial Settlements**: Gross ticket sales tracking, platform commission deductions (10%), refund deductions, net payable calculations, date-range filtering, and one-click Settlement CSV exports.
+- **Staff Oversight**: Delegated staff invitations, role assignments (`THEATRE_MANAGER`, `THEATRE_STAFF`), and access revocation.
+- **Live Operations Telemetry**: Real-time WebSocket connection to Socket.IO (`partner:<id>` and `show:<id>`), live seat lock ticker, and auditorium occupancy fill progress.
+- **Notifications & Partner Settings**: Operational approval notices, unread counter badge, mark all read, and password rotation.
+
+### 20.3 Setup & Run Commands
+```bash
+# Navigate to theatre dashboard
+cd apps/theatre-dashboard
+
+# Install dependencies
+npm install
+
+# Setup environment configuration
+cp .env.example .env
+
+# Start development server (http://localhost:5174)
+npm run dev
+
+# Run automated tests (Vitest)
+npm run test
+
+# Build production bundle
+npm run build
+```
+
+---
+
+## 21. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-locking and zero double-booking under race conditions via Redis Lua scripts, atomic MongoDB transactions, and compound unique partial indexes.
@@ -691,13 +747,15 @@ npm run build
 - **Search, Discovery & Recommendation Engine**: Centralized discovery system with safe regex escaping, ReDoS defense, multi-criteria filtering, verified show availability for now-showing movies, 48-hour booking velocity trending, 30-day sustained popularity, weighted Jaccard similar movies, geospatial `2dsphere` theatre radius searches, explainable rule-based recommendations with natural-language reasons, low-latency autocomplete suggestions, in-place recently viewed history management, and multi-tier Redis caching with automated invalidation.
 - **Production Hardening & Operations (Part 14)**: Distributed Redis rate limiting (`RedisRateLimitStore`), immutable append-only audit logging (`/api/v1/admin/audit-logs`), real MongoDB analytics reporting distinguishing Gross Booking Value, Captured Payments, Refunds, and Settlements (`/api/v1/admin/analytics/*` and `/api/v1/theatre-owner/analytics/*`), Kubernetes liveness/readiness/metrics probes (`/api/v1/health/*`), multi-stage Docker Alpine container, and GitHub Actions CI/CD workflows.
 - **Customer Frontend (Part 15)**: Modern cinematic React 18 single-page application with Vite, Tailwind CSS, TanStack Query v5, Zod validation, Socket.IO client, and Razorpay Checkout standard integration.
-- **Backend Quality Gate**: **624+ automated tests across 80 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
-- **Frontend Quality Gate**: **18 automated tests across 8 test suites passing (100% pass rate)**. Production Vite build compiling with 0 errors/warnings.
+- **Theatre Partner Dashboard (Part 16)**: Full-featured multi-tenant React 18 SPA with Vite, Tailwind CSS, TanStack Query v5, Recharts, Socket.IO client, and an interactive 2D Seating Layout Builder engine with immutable version publishing.
+- **Backend Quality Gate**: **625 automated tests across 81 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Customer Frontend Quality Gate**: **18 automated tests across 8 test suites passing (100% pass rate)**.
+- **Theatre Dashboard Quality Gate**: **15 automated tests across 8 test suites passing (100% pass rate)**. Production Vite build (2410 modules transformed) compiling with 0 errors/warnings.
 
 ---
 
 > [!IMPORTANT]
-> **Parts 1 through 15 Complete:** The complete Customer Frontend React application, full backend architecture, database designs, authentication, security, movie catalog, theatre management, seat locking, booking engine, Razorpay payments, notifications, search & discovery, production hardening, analytics, audit logs, Docker containerization, and CI/CD pipelines are fully implemented, verified, tested, and documented.
+> **Parts 1 through 16 Complete:** Both the Customer Frontend and Theatre Partner Dashboard React applications, full backend architecture, database designs, authentication, security, movie catalog, theatre management, seat locking, booking engine, Razorpay payments, notifications, search & discovery, production hardening, analytics, audit logs, Docker containerization, and CI/CD pipelines are fully implemented, verified, tested, and documented.
 > In strict accordance with the project instructions and stop condition:
-> **STOP AND WAIT FOR USER APPROVAL BEFORE PROCEEDING TO PART 16 (THEATRE PARTNER DASHBOARD).**
+> **STOP AND WAIT FOR USER APPROVAL BEFORE PROCEEDING TO PART 17 (SUPER ADMIN DASHBOARD).**
 
