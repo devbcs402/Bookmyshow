@@ -1,0 +1,366 @@
+erDiagram
+    USERS {
+        ObjectId _id PK
+        string name
+        string email UK
+        string phone UK
+        string passwordHash
+        ObjectId roleId FK
+        string roleCode
+        ObjectId partnerId FK
+        ObjectId cityId FK
+        boolean isEmailVerified
+        boolean isActive
+        date deletedAt
+        date createdAt
+    }
+
+    ROLES {
+        ObjectId _id PK
+        string code UK
+        string name
+        string description
+    }
+
+    PERMISSIONS {
+        ObjectId _id PK
+        string action UK
+        string module
+        string description
+    }
+
+    ROLE_PERMISSIONS {
+        ObjectId _id PK
+        ObjectId roleId FK
+        ObjectId permissionId FK
+    }
+
+    REFRESH_TOKENS {
+        ObjectId _id PK
+        ObjectId userId FK
+        string tokenHash UK
+        string familyId
+        boolean isRevoked
+        date expiresAt
+    }
+
+    OTP_VERIFICATIONS {
+        ObjectId _id PK
+        string target
+        string targetType
+        string purpose
+        string otpHash
+        number attempts
+        boolean isVerified
+        date expiresAt
+    }
+
+    COUNTRIES {
+        ObjectId _id PK
+        string name UK
+        string code UK
+        string currency
+        boolean isActive
+    }
+
+    STATES {
+        ObjectId _id PK
+        ObjectId countryId FK
+        string name
+        string code
+        boolean isActive
+    }
+
+    CITIES {
+        ObjectId _id PK
+        ObjectId stateId FK
+        ObjectId countryId FK
+        string name
+        string slug UK
+        boolean isTopCity
+        point coordinates
+        boolean isActive
+    }
+
+    THEATRE_PARTNERS {
+        ObjectId _id PK
+        ObjectId ownerUserId FK
+        string businessName
+        string gstin UK
+        string pan UK
+        string kycStatus
+        number commissionRate
+        boolean isActive
+    }
+
+    THEATRES {
+        ObjectId _id PK
+        ObjectId partnerId FK
+        ObjectId cityId FK
+        string name
+        string slug
+        string address
+        string pincode
+        point location
+        number totalScreens
+        boolean isActive
+    }
+
+    SCREENS {
+        ObjectId _id PK
+        ObjectId partnerId FK
+        ObjectId theatreId FK
+        string name
+        number screenNumber
+        string soundSystem
+        number totalSeats
+        number layoutVersion
+        boolean isActive
+    }
+
+    SEATS {
+        ObjectId _id PK
+        ObjectId screenId FK
+        ObjectId theatreId FK
+        ObjectId partnerId FK
+        number layoutVersion
+        string rowLabel
+        number columnNumber
+        string seatLabel
+        string categoryCode
+        string type
+        number gridRow
+        number gridCol
+        boolean isAvailable
+    }
+
+    MOVIES {
+        ObjectId _id PK
+        string title
+        string slug UK
+        string synopsis
+        number durationMins
+        date releaseDate
+        string censorRating
+        string status
+        number avgRating
+        number totalReviews
+    }
+
+    GENRES {
+        ObjectId _id PK
+        string name UK
+        string slug UK
+        boolean isActive
+    }
+
+    LANGUAGES {
+        ObjectId _id PK
+        string name UK
+        string code UK
+        boolean isActive
+    }
+
+    SHOWS {
+        ObjectId _id PK
+        ObjectId partnerId FK
+        ObjectId theatreId FK
+        ObjectId screenId FK
+        ObjectId movieId FK
+        ObjectId cityId FK
+        date showDate
+        date startTime
+        date endTime
+        string format
+        string language
+        number layoutVersion
+        number totalSeats
+        number availableSeats
+        string status
+    }
+
+    SHOW_SEATS {
+        ObjectId _id PK
+        ObjectId showId FK
+        ObjectId seatId FK
+        string seatLabel
+        string categoryCode
+        number price
+        string status
+        ObjectId lockedByUserId FK
+        date lockedUntil
+        ObjectId bookingId FK
+        number version
+    }
+
+    BOOKINGS {
+        ObjectId _id PK
+        string bookingReference UK
+        ObjectId customerId FK
+        ObjectId partnerId FK
+        ObjectId theatreId FK
+        ObjectId screenId FK
+        ObjectId showId FK
+        ObjectId movieId FK
+        number totalSeats
+        number baseAmount
+        number convenienceFee
+        number taxAmount
+        number discountAmount
+        number netPayableAmount
+        ObjectId couponId FK
+        string status
+        string qrCodePayload
+        string pdfTicketUrl
+        boolean isCheckedIn
+        date createdAt
+    }
+
+    PAYMENTS {
+        ObjectId _id PK
+        ObjectId bookingId FK
+        ObjectId customerId FK
+        ObjectId partnerId FK
+        string gateway
+        string razorpayOrderId UK
+        string razorpayPaymentId UK
+        string razorpaySignature
+        number amount
+        string currency
+        string status
+        string paymentMethod
+        date capturedAt
+    }
+
+    REFUNDS {
+        ObjectId _id PK
+        ObjectId bookingId FK
+        ObjectId paymentId FK
+        ObjectId customerId FK
+        string razorpayRefundId UK
+        number grossAmount
+        number deductions
+        number refundAmount
+        string reason
+        string status
+        date initiatedAt
+        date settledAt
+    }
+
+    PAYMENT_WEBHOOKS {
+        ObjectId _id PK
+        string eventId UK
+        string eventType
+        string signature
+        boolean isSignatureValid
+        boolean processed
+        date createdAt
+    }
+
+    COUPONS {
+        ObjectId _id PK
+        string code UK
+        string title
+        string discountType
+        number discountValue
+        number maxDiscountCap
+        number minOrderValue
+        number usageLimitPerUser
+        number totalUsageLimit
+        number currentUsageCount
+        date startDate
+        date endDate
+        boolean isActive
+    }
+
+    COUPON_REDEMPTIONS {
+        ObjectId _id PK
+        ObjectId couponId FK
+        string couponCode
+        ObjectId customerId FK
+        ObjectId bookingId FK
+        number discountAmount
+        string status
+        date redeemedAt
+    }
+
+    MOVIE_REVIEWS {
+        ObjectId _id PK
+        ObjectId movieId FK
+        ObjectId customerId FK
+        ObjectId bookingId FK
+        number rating
+        string reviewTitle
+        string comment
+        boolean isVerifiedBooking
+        number likesCount
+        boolean isFlagged
+        date createdAt
+    }
+
+    WISHLISTS {
+        ObjectId _id PK
+        ObjectId customerId FK
+        ObjectId movieId FK
+        ObjectId cityId FK
+        boolean notifyOnBookingOpen
+        boolean isAlertDispatched
+        date createdAt
+    }
+
+    NOTIFICATIONS {
+        ObjectId _id PK
+        ObjectId userId FK
+        string type
+        string title
+        string message
+        boolean isRead
+        date createdAt
+    }
+
+    AUDIT_LOGS {
+        ObjectId _id PK
+        ObjectId actorId FK
+        string actorRole
+        ObjectId partnerId FK
+        string action
+        string targetResource
+        ObjectId targetId
+        string ipAddress
+        date timestamp
+    }
+
+    %% Relationship Associations
+    USERS ||--o{ REFRESH_TOKENS : owns
+    USERS ||--o{ OTP_VERIFICATIONS : receives
+    ROLES ||--o{ USERS : assigns
+    ROLES ||--o{ ROLE_PERMISSIONS : defines
+    PERMISSIONS ||--o{ ROLE_PERMISSIONS : grants
+
+    COUNTRIES ||--o{ STATES : contains
+    STATES ||--o{ CITIES : contains
+    CITIES ||--o{ THEATRES : hosts
+
+    THEATRE_PARTNERS ||--o{ THEATRES : operates
+    THEATRE_PARTNERS ||--o{ USERS : employs
+    THEATRES ||--o{ SCREENS : houses
+    SCREENS ||--o{ SEATS : configures
+
+    MOVIES ||--o{ SHOWS : schedules
+    SCREENS ||--o{ SHOWS : displays
+    SHOWS ||--o{ SHOW_SEATS : manages_inventory
+    SEATS ||--o{ SHOW_SEATS : instantiates
+
+    USERS ||--o{ BOOKINGS : orders
+    SHOWS ||--o{ BOOKINGS : allocates
+    BOOKINGS ||--o{ PAYMENTS : settles
+    PAYMENTS ||--o{ REFUNDS : reimburses
+
+    COUPONS ||--o{ COUPON_REDEMPTIONS : redeems
+    BOOKINGS ||--o{ COUPON_REDEMPTIONS : applies
+    MOVIES ||--o{ MOVIE_REVIEWS : reviews
+    USERS ||--o{ MOVIE_REVIEWS : authors
+    USERS ||--o{ WISHLISTS : saves
+    MOVIES ||--o{ WISHLISTS : targets
+    USERS ||--o{ NOTIFICATIONS : alerted_by
+
