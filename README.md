@@ -307,7 +307,38 @@ The multi-tenant cinema complex, branch management, geospatial search, and compl
 
 ---
 
-## 10. Development Phases Overview
+## 10. Master Screen & Seat Layout Documentation Index (Part 7 Deliverables)
+
+The complete specifications, schemas, 2D visual layout builder, validation engine, versioning architecture, and security reports are organized in `docs/screens/`:
+
+1. [01. Screen & Seat Layout Management Overview](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/01-screen-management-overview.md)
+   - Module scope, spatial architecture, auditorium specifications, and layered service design.
+2. [02. Screen & Seat Layout Database Design](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/02-screen-database-design.md)
+   - Schemas for `screens`, `seat_categories`, `seating_layouts`, and `seats` with compound unique constraints.
+3. [03. Seat Category Management Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/03-seat-category-management.md)
+   - Default platform categories (`REGULAR`, `EXECUTIVE`, `PREMIUM`, `RECLINER`, `WHEELCHAIR`) + tenant custom tiers with hex display colors.
+4. [04. Seating Layout Architecture & Spatial Grid](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/04-seating-layout-architecture.md)
+   - 2D coordinate matrix `(gridRow, gridCol)`, irregular layouts, variable row lengths, and walking aisle corridors.
+5. [05. Seating Layout Validation Rules](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/05-layout-validation-rules.md)
+   - Invariant validation engine: duplicate labels, coordinate overlaps, out-of-bound coordinates, and unmapped categories.
+6. [06. Immutable Layout Versioning Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/06-layout-versioning.md)
+   - Non-destructive auditorium renovations: lifecycle states (`DRAFT`, `PUBLISHED`, `DEPRECATED`), and zero corruptions to historical shows.
+7. [07. Bulk Seat Generation Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/07-bulk-seat-generation.md)
+   - Declarative row specifications, algorithmic coordinate assignment, walking aisle gaps, and accessibility bay detection.
+8. [08. Capacity Calculation Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/08-capacity-calculation.md)
+   - Capacity metrics: physical chairs, bookable inventory, blocked inventory, maintenance inventory, and category/row breakdowns.
+9. [09. Screen & Seat Layout API Documentation](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/09-screen-api-documentation.md)
+   - Complete REST API specifications across 21 endpoints covering screens, categories, layout drafts, preview, publication, and physical chairs.
+10. [10. Multi-Tenant Security & BOLA Protection](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/10-multi-tenant-security.md)
+    - Cryptographic token context derivation, anti-enumeration 404 responses, and strict multi-tenant boundary enforcement.
+11. [11. Screen Module Testing & Quality Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/11-screen-testing-report.md)
+    - Full test suite report covering unit tests, integration tests, multi-tenant BOLA tests, and edge case coverage.
+12. [12. Screen Module Final Review & Sign-Off Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/screens/12-screen-module-review-report.md)
+    - Architectural review, requirement fulfillment matrix, and transition readiness for Part 8.
+
+---
+
+## 11. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
@@ -316,20 +347,19 @@ Phase 03: Backend Foundation & Project Setup (COMPLETED)
 Phase 04: Authentication, Security & RBAC Implementation (COMPLETED)
 Phase 05: Movie Management Module & Taxonomies (COMPLETED)
 Phase 06: Theatre & Branch Management Module (COMPLETED)
-Phase 07: Screen & Auditorium Management Module (PENDING APPROVAL)
-Phase 08: Seating Layout Visualizer & Seat Categories
-Phase 09: Show Scheduling Engine & Collision Prevention
-Phase 10: High-Concurrency Booking Engine & Redis Lua Locks
-Phase 11: Payment Gateway & Asynchronous Webhooks
-Phase 12: Digital Ticket QR Engine & Notifications
-Phase 13: Customer & Theatre Partner Frontend Applications
-Phase 14: Performance, Chaos & Load Testing
-Phase 15: Production Deployment & Observability
+Phase 07: Screen & Seat Layout Management Module (COMPLETED)
+Phase 08: Show Scheduling Engine & Dynamic Pricing (PENDING APPROVAL)
+Phase 09: High-Concurrency Booking Engine & Redis Lua Locks
+Phase 10: Payment Gateway & Asynchronous Webhooks
+Phase 11: Digital Ticket QR Engine & Notifications
+Phase 12: Customer & Theatre Partner Frontend Applications
+Phase 13: Performance, Chaos & Load Testing
+Phase 14: Production Deployment & Observability
 ```
 
 ---
 
-## 11. Architecture Status & Quality Gates
+## 12. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-booking under race conditions via Redis Lua scripts + MongoDB ACID transactions.
@@ -338,12 +368,13 @@ Phase 15: Production Deployment & Observability
 - **Role-Based Access Control**: 5 platform roles, 24 fine-grained permissions, and immutable server-side role assignment.
 - **Movie Catalog & Taxonomy**: Normalized `genres` and `languages`, denormalized `genreSlugs` indexing, 8-stage movie status lifecycle with dynamic theatrical state derivation, and Cloudinary media abstraction.
 - **Theatre & Branch Subsystem**: Multi-tenant cinema complexes, physical branch management, GeoJSON `2dsphere` proximity indexing (`$near`), BOLA/IDOR anti-enumeration defense, and staff delegation governance.
+- **Screen & Seating Layout Subsystem**: Multi-format auditorium management (`STANDARD`, `IMAX`, `DOLBY_ATMOS`, `4DX`), 2D spatial coordinate matrix, bulk generation engine, invariant validation engine, immutable layout versioning (`layoutVersion: 1, 2, 3...`), and physical chairs master inventory (`seats` collection).
 - **Payment Compliance**: Zero PCI-DSS footprint; Razorpay webhook verification via HMAC-SHA256 constant-time comparison.
-- **Test Quality Gate**: **201 automated tests across 27 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Test Quality Gate**: **259 automated tests across 32 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
 
 ---
 
 > [!IMPORTANT]
-> **Part 1, Part 2, Part 3, Part 4, Part 5 & Part 6 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, and theatre & branch management are fully implemented, verified, and documented.
-> In strict accordance with the project instructions, **Part 7: Screen & Auditorium Management Module** will commence only after user review and approval.
+> **Part 1, Part 2, Part 3, Part 4, Part 5, Part 6 & Part 7 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, and screen & seat layout management are fully implemented, verified, and documented.
+> In strict accordance with the project instructions, **Part 8: Show Scheduling Engine & Dynamic Pricing** will commence only after user review and approval.
 

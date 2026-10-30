@@ -13,6 +13,11 @@ import {
   cityPublicRoutes
 } from '../modules/theatres/theatre.routes.js';
 import branchRoutes from '../modules/theatres/branch/branch.routes.js';
+import {
+  screenOwnerRoutes,
+  screenAdminRoutes,
+  screenPublicRoutes
+} from '../modules/screens/screen.routes.js';
 
 const router = Router();
 
@@ -28,11 +33,14 @@ router.use('/movies', moviePublicRoutes);
 router.use('/genres', genrePublicRoutes);
 router.use('/languages', languagePublicRoutes);
 
-// Theatre & Branch routes
+// Theatre, Branch & Screen routes
 router.use('/owner/theatres', theatreOwnerRoutes);
 router.use('/owner', branchRoutes);
+router.use('/owner', screenOwnerRoutes);
 router.use('/admin/theatres', theatreAdminRoutes);
+router.use('/admin/screens', screenAdminRoutes);
 router.use('/theatres', theatrePublicRoutes);
+router.use('/screens', screenPublicRoutes);
 router.use('/cities', cityPublicRoutes);
 
 // Admin Management routes

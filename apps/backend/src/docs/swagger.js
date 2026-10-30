@@ -167,6 +167,89 @@ const swaggerOptions = {
             totalScreens: { type: 'number', example: 7 },
             isActive: { type: 'boolean', example: true }
           }
+        },
+        Screen: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0e1' },
+            theatreId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0a1' },
+            partnerId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0b1' },
+            name: { type: 'string', example: 'Screen 1 - IMAX with Laser' },
+            screenNumber: { type: 'integer', example: 1 },
+            screenType: { type: 'string', example: 'IMAX' },
+            supportedFormats: {
+              type: 'array',
+              items: { type: 'string' },
+              example: ['2D', '3D', 'IMAX_3D']
+            },
+            soundSystem: { type: 'string', example: 'Dolby Atmos 12.1' },
+            totalSeats: { type: 'integer', example: 250 },
+            totalRows: { type: 'integer', example: 12 },
+            totalColumns: { type: 'integer', example: 24 },
+            layoutVersion: { type: 'integer', example: 1 },
+            status: { type: 'string', example: 'ACTIVE' },
+            isActive: { type: 'boolean', example: true }
+          }
+        },
+        SeatCategory: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0f1' },
+            name: { type: 'string', example: 'VIP Recliner' },
+            code: { type: 'string', example: 'RECLINER' },
+            displayColor: { type: 'string', example: '#8B5CF6' },
+            basePrice: { type: 'number', example: 450 },
+            sortOrder: { type: 'integer', example: 1 },
+            isActive: { type: 'boolean', example: true }
+          }
+        },
+        SeatingLayout: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0f2' },
+            screenId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0e1' },
+            layoutVersion: { type: 'integer', example: 1 },
+            status: { type: 'string', example: 'PUBLISHED' },
+            totalSeats: { type: 'integer', example: 250 },
+            bookableSeats: { type: 'integer', example: 248 },
+            totalRows: { type: 'integer', example: 12 },
+            totalColumns: { type: 'integer', example: 24 },
+            categoryBreakdown: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  categoryCode: { type: 'string', example: 'PREMIUM' },
+                  count: { type: 'integer', example: 100 },
+                  bookableCount: { type: 'integer', example: 100 }
+                }
+              }
+            }
+          }
+        },
+        Seat: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0f3' },
+            screenId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0e1' },
+            layoutVersion: { type: 'integer', example: 1 },
+            rowLabel: { type: 'string', example: 'A' },
+            columnNumber: { type: 'integer', example: 1 },
+            seatLabel: { type: 'string', example: 'A1' },
+            categoryCode: { type: 'string', example: 'RECLINER' },
+            type: { type: 'string', example: 'RECLINER' },
+            status: { type: 'string', example: 'ACTIVE' },
+            gridRow: { type: 'integer', example: 0 },
+            gridCol: { type: 'integer', example: 0 },
+            isAvailable: { type: 'boolean', example: true },
+            accessibility: {
+              type: 'object',
+              properties: {
+                isWheelchairAccessible: { type: 'boolean', example: false },
+                hasCompanionSeat: { type: 'boolean', example: false }
+              }
+            }
+          }
         }
       }
     }

@@ -64,4 +64,3 @@ branchRoutes.delete(
 );
 
 export default branchRoutes;
-
