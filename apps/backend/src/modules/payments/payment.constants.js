@@ -44,4 +44,3 @@ export const PaymentDefaults = Object.freeze({
   DEFAULT_ORDER_EXPIRY_MINUTES: 15,
   MAX_REFUND_RETRY_ATTEMPTS: 3
 });
-

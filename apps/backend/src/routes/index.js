@@ -27,6 +27,8 @@ import {
 import seatLockRoutes from '../modules/seat-locks/seat-lock.routes.js';
 import { bookingRoutes, bookingOwnerRoutes } from '../modules/bookings/booking.routes.js';
 import paymentRoutes from '../modules/payments/payment.routes.js';
+import notificationRoutes from '../modules/notifications/routes/notification.routes.js';
+import adminNotificationRoutes from '../modules/notifications/routes/admin-notification.routes.js';
 
 const router = Router();
 
@@ -70,6 +72,10 @@ router.use('/owner/bookings', bookingOwnerRoutes);
 
 // Payment Gateway routes (Part 11)
 router.use('/payments', paymentRoutes);
+
+// Notification System routes (Part 12)
+router.use('/notifications', notificationRoutes);
+router.use('/admin/notifications', adminNotificationRoutes);
 
 // Subsequent domain modules will be mounted here:
 

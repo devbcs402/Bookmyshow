@@ -16,6 +16,12 @@ import { Roles } from '../auth/auth.constants.js';
 import { AppError } from '../../common/errors/app.error.js';
 import HttpStatus from '../../common/constants/http-status.js';
 import ErrorCodes from '../../common/constants/error-codes.js';
+import notificationService from '../notifications/services/notification.service.js';
+import {
+  NotificationType,
+  NotificationCategory,
+  NotificationChannel
+} from '../notifications/constants/notification.constants.js';
 
 export class PaymentService {
   /**
@@ -867,6 +873,36 @@ export class PaymentService {
       { refundId: savedRefund._id, rzpRefundId: rzpRefund.id, amount },
       'Refund initiated and settled successfully'
     );
+
+    // Asynchronously dispatch refund notification
+    setImmediate(async () => {
+      try {
+        await notificationService.sendNotification({
+          userId: payment.customerId,
+          type: NotificationType.REFUND_PROCESSED,
+          category: NotificationCategory.TRANSACTIONAL,
+          channels: [
+            NotificationChannel.IN_APP,
+            NotificationChannel.EMAIL,
+            NotificationChannel.SMS
+          ],
+          data: {
+            refundAmount: amount,
+            refundId: rzpRefund.id,
+            reason: reason || 'Customer refund',
+            bookingReference: payment.bookingId ? payment.bookingId.toString() : 'Booking'
+          },
+          idempotencyKey: `idemp:REFUND:${savedRefund._id}`,
+          relatedEntityType: 'payment',
+          relatedEntityId: payment._id
+        });
+      } catch (_notifErr) {
+        logger.warn(
+          { err: _notifErr.message, paymentId },
+          'Failed to dispatch refund notification'
+        );
+      }
+    });
 
     return savedRefund;
   }

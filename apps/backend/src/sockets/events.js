@@ -19,6 +19,11 @@ export const SocketEvents = Object.freeze({
   BOOKING_CANCELLED: 'booking:cancelled',
   BOOKING_EXPIRED: 'booking:expired',
 
+  // Notification events
+  NOTIFICATION_NEW: 'notification:new',
+  NOTIFICATION_READ: 'notification:read',
+  NOTIFICATION_UNREAD_COUNT_UPDATED: 'notification:unread-count-updated',
+
   // Legacy/compatibility aliases
   SEATS_LOCKED: 'show:seats_locked',
   SEATS_RELEASED: 'show:seats_released',

@@ -37,7 +37,32 @@ const envSchema = z.object({
   RAZORPAY_KEY_SECRET: z.string().default('rzp_test_mockSecret12345678'),
   RAZORPAY_WEBHOOK_SECRET: z.string().default('rzp_webhook_secret_mock_123456'),
   RAZORPAY_CURRENCY: z.string().default('INR'),
-  PAYMENT_ORDER_EXPIRY_MINUTES: z.coerce.number().int().min(1).max(120).default(15)
+  PAYMENT_ORDER_EXPIRY_MINUTES: z.coerce.number().int().min(1).max(120).default(15),
+
+  // Notification Providers & Settings
+  EMAIL_PROVIDER: z.enum(['mock', 'smtp', 'resend']).default('mock'),
+  EMAIL_FROM_NAME: z.string().default('BookMyShow Support'),
+  EMAIL_FROM_ADDRESS: z.string().default('no-reply@bookmyshow.example.com'),
+  SMTP_HOST: z.string().default('localhost'),
+  SMTP_PORT: z.coerce.number().default(587),
+  SMTP_USER: z.string().default(''),
+  SMTP_PASS: z.string().default(''),
+  RESEND_API_KEY: z.string().default(''),
+
+  SMS_PROVIDER: z.enum(['mock', 'twilio', 'fast2sms']).default('mock'),
+  SMS_SENDER_ID: z.string().default('BMSIND'),
+  TWILIO_ACCOUNT_SID: z.string().default(''),
+  TWILIO_AUTH_TOKEN: z.string().default(''),
+  TWILIO_FROM_PHONE: z.string().default(''),
+  FAST2SMS_API_KEY: z.string().default(''),
+
+  WHATSAPP_PROVIDER: z.enum(['mock', 'whatsapp_cloud']).default('mock'),
+  WHATSAPP_PHONE_NUMBER_ID: z.string().default(''),
+  WHATSAPP_ACCESS_TOKEN: z.string().default(''),
+  WHATSAPP_BUSINESS_ACCOUNT_ID: z.string().default(''),
+
+  NOTIFICATION_MAX_RETRY_ATTEMPTS: z.coerce.number().int().min(1).max(10).default(3),
+  NOTIFICATION_RETRY_BACKOFF_SECONDS: z.coerce.number().int().min(1).max(3600).default(5)
 });
 
 const parseConfig = () => {

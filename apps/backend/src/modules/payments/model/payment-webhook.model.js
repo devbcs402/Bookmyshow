@@ -65,4 +65,3 @@ export const PaymentWebhookModel =
   mongoose.model('PaymentWebhook', paymentWebhookSchema, 'payment_webhooks');
 
 export default PaymentWebhookModel;
-

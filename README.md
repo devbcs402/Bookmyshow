@@ -478,7 +478,46 @@ The complete architectural specifications, Razorpay integration, cryptographic H
 
 ---
 
-## 15. Development Phases Overview
+## 15. Master Notification System Documentation Index (Part 12 Deliverables)
+
+The complete architectural specifications, provider adapters (Email, SMS, WhatsApp), in-app notification ledger, Socket.IO real-time push, template engine, background queues, and security reports are organized in `docs/notifications/`:
+
+1. [01. Notification System Architecture & System Topology](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/01-notification-architecture.md)
+   - Omnichannel architecture, provider-independent adapters, non-blocking delivery, and system topology.
+2. [02. Notification Events & Business Lifecycle Integration](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/02-notification-events.md)
+   - Master event catalog (Auth, Booking, Payment, Theatre, Platform), post-commit trigger guarantees, and transactional safety.
+3. [03. Email Provider Integration & Delivery Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/03-email-integration.md)
+   - Configurable Resend / SMTP / Mock adapters, HTML responsive ticket formatting, plain-text fallback, and delivery tracking.
+4. [04. SMS Gateway Integration & Indian Telecom DLT Compliance](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/04-sms-integration.md)
+   - TRAI DLT regulations (PE ID, BMSIND header, template IDs), E.164 phone validation, 160-char GSM parts calculation, and masked logging.
+5. [05. Official WhatsApp Business Cloud API Integration](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/05-whatsapp-integration.md)
+   - Meta WhatsApp Business Platform Cloud API (v20.0), pre-approved utility templates, explicit opt-in consent, and no scraping.
+6. [06. In-App Notifications & Durable Storage](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/06-in-app-notifications.md)
+   - MongoDB `notifications` collection, 60-day TTL indexing, user feed querying, soft deletion, and unread counts.
+7. [07. Socket.IO Real-Time Notifications & Private User Rooms](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/07-socket-notifications.md)
+   - Private `user:<userId>` room architecture, real-time events (`notification:new`, `notification:read`), and horizontal Redis Pub/Sub scaling.
+8. [08. Customer Notification Preferences & Consent Governance](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/08-notification-preferences.md)
+   - Granular channel/category preference controls, mandatory security alert locking, and transactional vs promotional separation.
+9. [09. Template Engine & Multi-Lingual Localization](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/09-template-management.md)
+   - HTML sanitization against XSS, variable validation, and built-in localized templates across English, Hindi, and Gujarati.
+10. [10. Background Queue Architecture & Worker Execution](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/10-background-delivery.md)
+    - Redis and in-memory fallback queue processing, worker loops, non-blocking execution, and restart resilience.
+11. [11. Delivery Tracking, Status Lifecycles & Monitoring](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/11-delivery-tracking.md)
+    - Per-channel `notification_deliveries` ledger, status state machine (`QUEUED`, `PROCESSING`, `SENT`, `DELIVERED`, `RETRYING`, `PERMANENTLY_FAILED`), and analytics.
+12. [12. Deduplication, Idempotency & Exponential Backoff Retries](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/12-deduplication-and-retries.md)
+    - Unique compound idempotency keys, exponential backoff delay calculation ($5 \times 2^{n-1}$), and dead-letter queue routing.
+13. [13. Administrative Notification Management & Broadcasts](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/13-admin-notification-management.md)
+    - Super Admin platform broadcasts, audience targeting (`ALL`, `CUSTOMERS`, `THEATRE_OWNERS`), delivery statistics, and RBAC guards.
+14. [14. Notification Security, Privacy & Consent Compliance](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/14-security-and-consent.md)
+    - Masked phone logging, BOLA / IDOR access defense, XSS entity escaping, and anti-spam governance.
+15. [15. Notification System Testing & Quality Assurance Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/15-testing-report.md)
+    - 65 automated tests across 8 suites (unit, integration, providers, queue, scenarios) with 100% pass rate.
+16. [16. Notification Module Architectural Review & Sign-Off](file:///d:/YASH%20KACHA/Bookmyshow/docs/notifications/16-notification-module-review.md)
+    - Architectural sign-off, checklist verification, and readiness audit for Part 13.
+
+---
+
+## 16. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
@@ -492,15 +531,16 @@ Phase 08: Show Scheduling Engine & Dynamic Pricing (COMPLETED)
 Phase 09: Seat Availability & Temporary Seat Locking System (COMPLETED)
 Phase 10: Booking Engine Module (Production-Grade) (COMPLETED)
 Phase 11: Payment Processing & Gateway Integration (Razorpay) (COMPLETED)
-Phase 12: Digital Ticket Delivery, PDF Invoicing & Notifications (PENDING APPROVAL)
-Phase 13: Customer & Theatre Partner Frontend Applications
-Phase 14: Performance, Chaos & Load Testing
-Phase 15: Production Deployment & Observability
+Phase 12: Notification System & Omnichannel Alerts (COMPLETED)
+Phase 13: Search, Filtering, Discovery & Recommendation Engine (PENDING APPROVAL)
+Phase 14: Customer & Theatre Partner Frontend Applications
+Phase 15: Performance, Chaos & Load Testing
+Phase 16: Production Deployment & Observability
 ```
 
 ---
 
-## 16. Architecture Status & Quality Gates
+## 17. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-locking and zero double-booking under race conditions via Redis Lua scripts, atomic MongoDB transactions, and compound unique partial indexes.
@@ -514,11 +554,12 @@ Phase 15: Production Deployment & Observability
 - **Seat Availability & Locking Subsystem**: Distributed atomic multi-seat locking via single-threaded Redis Lua scripts (`ACQUIRE_MULTI_SEAT_LOCKS_LUA`), safe compare-and-delete release (`RELEASE_MULTI_SEAT_LOCKS_LUA`), renewal ceiling limits, BOLA/IDOR protection with dual-identifier validation (`lockId` + `userId`), non-blocking SCAN iteration, and Socket.IO real-time broadcasts with Redis Pub/Sub adapter.
 - **Booking Engine Subsystem**: Dual-phase reservation transition, centralized status state machine (`BookingStatusService`), server-side dynamic pricing with epsilon rounding, client idempotency caching with SHA-256 fingerprinting, distributed expiration worker via Redis Sorted Sets (`bookings:expirations`), and tamper-proof HMAC-SHA256 gate QR admittance tokens.
 - **Payment Processing & Gateway Integration**: Official Razorpay Node.js SDK integration with server-side paise order generation, constant-time HMAC-SHA256 signature verification (`crypto.timingSafeEqual`), untampered raw body webhook processing (`express.json` verify hook), multi-document MongoDB ACID confirmation transactions, Zero PCI-DSS SAQ A compliance, multi-tenant BOLA defense, and automated reconciliation for orphan orders and late captures.
-- **Test Quality Gate**: **478 automated tests across 62 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Notification System & Omnichannel Alerts**: Centralized decoupled notification architecture across Email (SMTP/Resend/Mock), SMS (Fast2SMS/Twilio/Mock with Indian DLT compliance), WhatsApp (Meta Business Platform Cloud API), and In-App delivery. Dual-mode Redis and in-memory background queues, exponential backoff retries ($5 \times 2^{n-1}$), dead-letter queues, HTML sanitization, multi-lingual localization (en, hi, gu), private Socket.IO user rooms (`user:<userId>`), and strict BOLA defense.
+- **Test Quality Gate**: **538 automated tests across 69 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
 
 ---
 
 > [!IMPORTANT]
-> **Parts 1 through 11 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, show management & scheduling, seat availability & temporary seat locking, production-grade booking engine, and Razorpay payment gateway integration are fully implemented, verified, and documented.
-> In strict accordance with the project instructions, **Part 12: Digital Ticket Delivery, PDF Invoicing & Notifications** will commence only after user review and approval.
+> **Parts 1 through 12 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, show management & scheduling, seat availability & temporary seat locking, production-grade booking engine, Razorpay payment gateway integration, and the centralized omnichannel notification system are fully implemented, verified, and documented.
+> In strict accordance with the project instructions, **Part 13: Search, Filtering, Discovery & Recommendation Engine** will commence only after user review and approval.
 

@@ -111,4 +111,3 @@ export const RefundModel =
   mongoose.models.Refund || mongoose.model('Refund', refundSchema, 'refunds');
 
 export default RefundModel;
-

@@ -22,6 +22,12 @@ import { AppError } from '../../common/errors/app.error.js';
 import HttpStatus from '../../common/constants/http-status.js';
 import ErrorCodes from '../../common/constants/error-codes.js';
 import { Roles } from '../auth/auth.constants.js';
+import notificationService from '../notifications/services/notification.service.js';
+import {
+  NotificationType,
+  NotificationCategory,
+  NotificationChannel
+} from '../notifications/constants/notification.constants.js';
 
 export class BookingService {
   /**
@@ -652,6 +658,45 @@ export class BookingService {
       { bookingId, reference: booking.bookingReference },
       'Booking confirmed successfully upon verified payment'
     );
+
+    // Asynchronously dispatch Booking Confirmed notification (Zero blocking of business response)
+    setImmediate(async () => {
+      try {
+        const seatLabels = Array.isArray(booking.seats)
+          ? booking.seats.map(s => s.seatNumber || s.seatId).join(', ')
+          : '';
+        await notificationService.sendNotification({
+          userId: booking.customerId,
+          type: NotificationType.BOOKING_CONFIRMED,
+          category: NotificationCategory.TRANSACTIONAL,
+          channels: [
+            NotificationChannel.IN_APP,
+            NotificationChannel.EMAIL,
+            NotificationChannel.SMS,
+            NotificationChannel.WHATSAPP
+          ],
+          data: {
+            bookingReference: booking.bookingReference,
+            movieTitle: booking.snapshot?.movieTitle || 'Movie Ticket',
+            theatreName: booking.snapshot?.theatreName || 'Cinema',
+            screenName: booking.snapshot?.screenName || 'Auditorium',
+            showDate: booking.snapshot?.showDate || '',
+            showTime: booking.snapshot?.showTime || '',
+            seatLabels,
+            totalAmount: paymentData.amount || booking.netPayableAmount,
+            ticketUrl: `${config.CLIENT_URL}/tickets/${booking.bookingReference}`
+          },
+          idempotencyKey: `idemp:CONFIRM:${booking._id}`,
+          relatedEntityType: 'booking',
+          relatedEntityId: booking._id
+        });
+      } catch (_notifErr) {
+        logger.warn(
+          { err: _notifErr.message, bookingId },
+          'Failed to dispatch booking confirmation notification'
+        );
+      }
+    });
 
     return confirmedBooking;
   }

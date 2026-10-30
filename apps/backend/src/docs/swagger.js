@@ -691,6 +691,85 @@ const swaggerOptions = {
             initiatedAt: { type: 'string', format: 'date-time' },
             settledAt: { type: 'string', format: 'date-time' }
           }
+        },
+        Notification: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c099' },
+            userId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c001' },
+            title: { type: 'string', example: 'Booking Confirmed! 🎟️' },
+            message: {
+              type: 'string',
+              example: 'Your booking BK-20261030-XYZ789 for Inception is confirmed.'
+            },
+            type: {
+              type: 'string',
+              example: 'BOOKING_CONFIRMED'
+            },
+            category: {
+              type: 'string',
+              enum: ['TRANSACTIONAL', 'MARKETING', 'SECURITY', 'SYSTEM'],
+              example: 'TRANSACTIONAL'
+            },
+            relatedEntityType: { type: 'string', example: 'booking' },
+            relatedEntityId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c088' },
+            metadata: { type: 'object' },
+            isRead: { type: 'boolean', example: false },
+            readAt: { type: 'string', format: 'date-time', nullable: true },
+            createdAt: { type: 'string', format: 'date-time' }
+          }
+        },
+        NotificationPreference: {
+          type: 'object',
+          properties: {
+            userId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c001' },
+            channels: {
+              type: 'object',
+              properties: {
+                email: { type: 'boolean', example: true },
+                sms: { type: 'boolean', example: true },
+                whatsapp: { type: 'boolean', example: false },
+                inApp: { type: 'boolean', example: true }
+              }
+            },
+            categories: {
+              type: 'object',
+              properties: {
+                bookingUpdates: { type: 'boolean', example: true },
+                paymentUpdates: { type: 'boolean', example: true },
+                promotionalUpdates: { type: 'boolean', example: false },
+                securityAlerts: { type: 'boolean', example: true }
+              }
+            },
+            preferredLanguage: {
+              type: 'string',
+              enum: ['en', 'hi', 'gu'],
+              example: 'en'
+            },
+            whatsappConsent: { type: 'boolean', example: false },
+            whatsappConsentAt: { type: 'string', format: 'date-time', nullable: true }
+          }
+        },
+        BroadcastAnnouncementRequest: {
+          type: 'object',
+          required: ['title', 'message'],
+          properties: {
+            title: { type: 'string', example: 'Scheduled Maintenance Notice' },
+            message: {
+              type: 'string',
+              example: 'The platform will undergo maintenance on Sunday from 2 AM to 4 AM IST.'
+            },
+            audience: {
+              type: 'string',
+              enum: ['ALL', 'CUSTOMERS', 'THEATRE_OWNERS'],
+              example: 'ALL'
+            },
+            channels: {
+              type: 'array',
+              items: { type: 'string', enum: ['IN_APP', 'EMAIL', 'SMS', 'WHATSAPP'] },
+              example: ['IN_APP']
+            }
+          }
         }
       }
     }

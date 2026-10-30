@@ -75,6 +75,17 @@ export const initSocketServer = httpServer => {
     // Register Seat Lock real-time room listeners
     registerSeatLockSocketHandlers(socket, io);
 
+    // If authenticated, join private user notification room strictly bounded to sub ID
+    if (socket.data.user?.isAuthenticated && socket.data.user?.id) {
+      const userRoom = `user:${socket.data.user.id}`;
+      socket.join(userRoom);
+      logger.info({
+        msg: 'Socket client joined private user notification room',
+        socketId: socket.id,
+        userRoom
+      });
+    }
+
     socket.on(SocketEvents.DISCONNECT, reason => {
       logger.info({ msg: 'Socket client disconnected', socketId: socket.id, reason });
     });
