@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import MovieController from './movie.controller.js';
+import DiscoveryController from '../discovery/controllers/discovery.controller.js';
 import { authenticate, authorizePermission } from '../../middlewares/auth.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import {
@@ -11,11 +12,34 @@ import {
   movieSlugParamValidation,
   rejectMovieValidation
 } from './movie.validation.js';
+import {
+  movieSearchQueryValidation,
+  nowShowingQueryValidation,
+  trendingQueryValidation,
+  popularQueryValidation,
+  similarMovieParamValidation
+} from '../discovery/validators/discovery.validation.js';
 import { Permissions } from '../auth/auth.constants.js';
 
 // Public Movie Routes mounted at /api/v1/movies
 export const moviePublicRoutes = Router();
 
+// Search, Discovery, and Filter endpoints (declared before /:slug)
+moviePublicRoutes.get(
+  '/search',
+  validate(movieSearchQueryValidation, 'query'),
+  DiscoveryController.searchMovies
+);
+moviePublicRoutes.get(
+  '/trending',
+  validate(trendingQueryValidation, 'query'),
+  DiscoveryController.getTrendingMovies
+);
+moviePublicRoutes.get(
+  '/popular',
+  validate(popularQueryValidation, 'query'),
+  DiscoveryController.getPopularMovies
+);
 moviePublicRoutes.get('/', validate(publicMovieQueryValidation), MovieController.getPublicMovies);
 moviePublicRoutes.get(
   '/upcoming',
@@ -24,8 +48,13 @@ moviePublicRoutes.get(
 );
 moviePublicRoutes.get(
   '/now-showing',
-  validate(publicMovieQueryValidation),
-  MovieController.getNowShowingMovies
+  validate(nowShowingQueryValidation, 'query'),
+  DiscoveryController.getNowShowingMovies
+);
+moviePublicRoutes.get(
+  '/:movieId/similar',
+  validate(similarMovieParamValidation, 'params'),
+  DiscoveryController.getSimilarMovies
 );
 moviePublicRoutes.get('/:slug', validate(movieSlugParamValidation), MovieController.getMovieBySlug);
 

@@ -240,6 +240,10 @@ const movieSchema = new mongoose.Schema(
 movieSchema.index({ slug: 1 }, { unique: true });
 movieSchema.index({ status: 1, releaseDate: -1, avgRating: -1 });
 movieSchema.index({ status: 1, genreSlugs: 1, availableFormats: 1 });
+movieSchema.index({ status: 1, languageIds: 1, releaseDate: -1 });
+movieSchema.index({ status: 1, isDeleted: 1, releaseDate: 1 });
+movieSchema.index({ 'cast.name': 1, status: 1, isDeleted: 1 });
+movieSchema.index({ 'crew.name': 1, status: 1, isDeleted: 1 });
 movieSchema.index({ isDeleted: 1, deletedAt: 1 });
 movieSchema.index(
   {

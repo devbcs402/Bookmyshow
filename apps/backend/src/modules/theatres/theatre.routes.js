@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import TheatreController from './theatre.controller.js';
+import DiscoveryController from '../discovery/controllers/discovery.controller.js';
 import {
   authenticate,
   authorizeRoles,
@@ -20,6 +21,7 @@ import {
   paramStaffSchema,
   createCitySchema
 } from './theatre.validation.js';
+import { theatreSearchQueryValidation } from '../discovery/validators/discovery.validation.js';
 import { Roles, Permissions } from '../auth/auth.constants.js';
 
 /* =========================================================================
@@ -167,6 +169,12 @@ theatreAdminRoutes.patch(
  * 3. PUBLIC THEATRE ROUTES (/api/v1/theatres)
  * ========================================================================= */
 export const theatrePublicRoutes = Router();
+
+theatrePublicRoutes.get(
+  '/search',
+  validate(theatreSearchQueryValidation, 'query'),
+  DiscoveryController.searchTheatres
+);
 
 theatrePublicRoutes.get(
   '/',

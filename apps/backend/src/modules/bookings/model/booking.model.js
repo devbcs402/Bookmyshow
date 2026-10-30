@@ -312,6 +312,12 @@ bookingSchema.index(
   { name: 'idx_bookings_customer_idempotency', sparse: true }
 );
 
+// Discovery trending & popularity aggregation index
+bookingSchema.index(
+  { status: 1, createdAt: -1, movieId: 1 },
+  { name: 'idx_bookings_status_created_movie' }
+);
+
 export const BookingModel = mongoose.models.bookings || mongoose.model('bookings', bookingSchema);
 
 export default BookingModel;

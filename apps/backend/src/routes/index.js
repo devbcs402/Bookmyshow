@@ -29,6 +29,11 @@ import { bookingRoutes, bookingOwnerRoutes } from '../modules/bookings/booking.r
 import paymentRoutes from '../modules/payments/payment.routes.js';
 import notificationRoutes from '../modules/notifications/routes/notification.routes.js';
 import adminNotificationRoutes from '../modules/notifications/routes/admin-notification.routes.js';
+import {
+  recommendationRoutes,
+  searchSuggestionRoutes,
+  locationDiscoveryRoutes
+} from '../modules/discovery/routes/discovery.routes.js';
 
 const router = Router();
 
@@ -76,6 +81,11 @@ router.use('/payments', paymentRoutes);
 // Notification System routes (Part 12)
 router.use('/notifications', notificationRoutes);
 router.use('/admin/notifications', adminNotificationRoutes);
+
+// Discovery, Search & Recommendations Engine routes (Part 13)
+router.use('/recommendations', recommendationRoutes);
+router.use('/search', searchSuggestionRoutes);
+router.use('/discovery/location', locationDiscoveryRoutes);
 
 // Subsequent domain modules will be mounted here:
 

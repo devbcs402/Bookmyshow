@@ -275,6 +275,8 @@ const theatreSchema = new mongoose.Schema(
 theatreSchema.index({ partnerId: 1, isDeleted: 1 });
 theatreSchema.index({ status: 1, isActive: 1, isDeleted: 1 });
 theatreSchema.index({ 'address.cityId': 1, status: 1, isDeleted: 1 });
+theatreSchema.index({ 'address.pincode': 1, status: 1, isDeleted: 1 });
+theatreSchema.index({ 'address.area': 1, status: 1, isDeleted: 1 });
 theatreSchema.index({ location: '2dsphere' });
 theatreSchema.index(
   {

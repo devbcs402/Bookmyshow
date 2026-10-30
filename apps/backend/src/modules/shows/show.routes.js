@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import ShowController from './show.controller.js';
 import ShowPricingController from './show-pricing/show-pricing.controller.js';
+import DiscoveryController from '../discovery/controllers/discovery.controller.js';
 import {
   authenticate,
   authorizeRoles,
@@ -23,6 +24,7 @@ import {
   setPricingSchema,
   updatePricingCategorySchema
 } from './show-pricing/show-pricing.validation.js';
+import { showSearchQueryValidation } from '../discovery/validators/discovery.validation.js';
 import { Roles, Permissions } from '../auth/auth.constants.js';
 
 /* =========================================================================
@@ -114,6 +116,12 @@ showOwnerRoutes.patch(
  * 2. PUBLIC SHOW ROUTES (Mounted under /api/v1/shows)
  * ========================================================================= */
 export const showPublicRoutes = Router();
+
+showPublicRoutes.get(
+  '/search',
+  validate(showSearchQueryValidation, 'query'),
+  DiscoveryController.searchShows
+);
 
 showPublicRoutes.get(
   '/',

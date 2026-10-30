@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { Movie } from './model/movie.model.js';
 import { PublicVisibleStatuses } from './movie.constants.js';
 
@@ -75,6 +76,9 @@ export class MovieRepository {
   }
 
   static async findAdminMovies({ filter = {}, page = 1, limit = 20, sort = { createdAt: -1 } }) {
+    if (mongoose.connection.readyState !== 1) {
+      return { movies: [], total: 0 };
+    }
     const skip = (page - 1) * limit;
 
     const baseFilter = {
@@ -98,6 +102,9 @@ export class MovieRepository {
   }
 
   static async findPublicMovies({ filter = {}, page = 1, limit = 20, sort = { releaseDate: -1 } }) {
+    if (mongoose.connection.readyState !== 1) {
+      return { movies: [], total: 0 };
+    }
     const skip = (page - 1) * limit;
 
     const baseFilter = {

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import UsersController from './users.controller.js';
 import BookingController from '../bookings/booking.controller.js';
+import recentlyViewedRoutes from '../discovery/routes/recently-viewed.routes.js';
 import { authenticate } from '../../middlewares/auth.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { updateProfileValidation, sessionIdParamValidation } from './users.validation.js';
@@ -16,6 +17,9 @@ router.get('/me', UsersController.getProfile);
 router.patch('/me', validate(updateProfileValidation), UsersController.updateProfile);
 router.get('/me/status', UsersController.getAccountStatus);
 router.delete('/me', UsersController.deactivateAccount);
+
+// Recently Viewed Movies (Discovery Module)
+router.use('/me/recently-viewed', recentlyViewedRoutes);
 
 // Bookings
 router.get(

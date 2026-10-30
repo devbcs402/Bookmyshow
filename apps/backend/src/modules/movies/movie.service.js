@@ -12,6 +12,7 @@ import { NotFoundError } from '../../common/errors/not-found.error.js';
 import { ValidationError } from '../../common/errors/validation.error.js';
 import ErrorCodes from '../../common/constants/error-codes.js';
 import AuthRepository from '../auth/auth.repository.js';
+import DiscoveryCacheService from '../discovery/services/discovery-cache.service.js';
 
 export class MovieService {
   /**
@@ -254,6 +255,8 @@ export class MovieService {
       details: updateFields
     });
 
+    DiscoveryCacheService.invalidateMovieCaches(movieId).catch(() => {});
+
     return updatedMovie;
   }
 
@@ -267,6 +270,7 @@ export class MovieService {
     }
 
     await MovieRepository.softDelete(movieId, actorId);
+    DiscoveryCacheService.invalidateMovieCaches(movieId).catch(() => {});
 
     await AuthRepository.createAuditLog({
       actorId,
@@ -303,6 +307,8 @@ export class MovieService {
       updatedBy: actorId
     });
 
+    DiscoveryCacheService.invalidateMovieCaches(movieId).catch(() => {});
+
     await AuthRepository.createAuditLog({
       actorId,
       actorRole: 'SUPER_ADMIN',
@@ -329,6 +335,8 @@ export class MovieService {
       rejectionReason: reason.trim(),
       updatedBy: actorId
     });
+
+    DiscoveryCacheService.invalidateMovieCaches(movieId).catch(() => {});
 
     await AuthRepository.createAuditLog({
       actorId,

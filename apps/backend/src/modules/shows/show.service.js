@@ -22,6 +22,7 @@ import { ValidationError } from '../../common/errors/validation.error.js';
 import { ConflictError } from '../../common/errors/conflict.error.js';
 import { AuthorizationError } from '../../common/errors/authorization.error.js';
 import ErrorCodes from '../../common/constants/error-codes.js';
+import DiscoveryCacheService from '../discovery/services/discovery-cache.service.js';
 
 export class ShowService {
   /**
@@ -317,6 +318,8 @@ export class ShowService {
       return ShowRepository.updateById(show._id, updatePayload, session);
     });
 
+    DiscoveryCacheService.invalidateShowCaches(show.cityId).catch(() => {});
+
     return ShowRepository.findById(updated._id);
   }
 
@@ -365,6 +368,8 @@ export class ShowService {
       updatedBy: userContext.id
     });
 
+    DiscoveryCacheService.invalidateShowCaches(show.cityId).catch(() => {});
+
     return updated;
   }
 
@@ -392,6 +397,8 @@ export class ShowService {
       cancelledBy: userContext.id,
       updatedBy: userContext.id
     });
+
+    DiscoveryCacheService.invalidateShowCaches(show.cityId).catch(() => {});
 
     return updated;
   }

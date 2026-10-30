@@ -770,6 +770,38 @@ const swaggerOptions = {
               example: ['IN_APP']
             }
           }
+        },
+        SearchSuggestion: {
+          type: 'object',
+          properties: {
+            type: { type: 'string', enum: ['MOVIE', 'ACTOR', 'DIRECTOR', 'GENRE', 'THEATRE', 'CITY'], example: 'MOVIE' },
+            title: { type: 'string', example: 'Dune: Part Two' },
+            slug: { type: 'string', example: 'dune-part-two' },
+            posterUrl: { type: 'string', example: 'https://cdn.example.com/poster.jpg' },
+            year: { type: 'integer', example: 2026 }
+          }
+        },
+        RecommendationResult: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0aa' },
+            title: { type: 'string', example: 'Chhello Show' },
+            slug: { type: 'string', example: 'chhello-show' },
+            posterUrl: { type: 'string', example: 'https://cdn.example.com/chhello.jpg' },
+            avgRating: { type: 'number', example: 8.7 },
+            recommendationScore: { type: 'number', example: 85.5 },
+            explanation: { type: 'string', example: 'Recommended because it matches your preferred genres (Drama)' }
+          }
+        },
+        RecentlyViewedMovie: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0aa' },
+            title: { type: 'string', example: 'Dune: Part Two' },
+            slug: { type: 'string', example: 'dune-part-two' },
+            posterUrl: { type: 'string', example: 'https://cdn.example.com/poster.jpg' },
+            viewedAt: { type: 'string', format: 'date-time' }
+          }
         }
       }
     }
