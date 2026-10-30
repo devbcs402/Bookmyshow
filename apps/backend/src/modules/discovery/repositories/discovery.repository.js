@@ -473,10 +473,7 @@ export class DiscoveryRepository {
     });
 
     // 3. Genres suggestions
-    const genres = await Genre.find(
-      { name: regex, isActive: true },
-      { name: 1, slug: 1 }
-    )
+    const genres = await Genre.find({ name: regex, isActive: true }, { name: 1, slug: 1 })
       .limit(3)
       .lean();
 
@@ -489,10 +486,7 @@ export class DiscoveryRepository {
     });
 
     // 4. Cities suggestions
-    const cities = await City.find(
-      { name: regex, isActive: true },
-      { name: 1, state: 1, slug: 1 }
-    )
+    const cities = await City.find({ name: regex, isActive: true }, { name: 1, state: 1, slug: 1 })
       .limit(3)
       .lean();
 
@@ -517,10 +511,7 @@ export class DiscoveryRepository {
       _id: { $ne: movieId },
       status: { $in: PublicVisibleStatuses },
       isDeleted: false,
-      $or: [
-        { genreSlugs: { $in: genreSlugs } },
-        { languageIds: { $in: languageIds } }
-      ]
+      $or: [{ genreSlugs: { $in: genreSlugs } }, { languageIds: { $in: languageIds } }]
     })
       .populate('genreIds', 'name slug')
       .populate('languageIds', 'name code nativeName')
@@ -552,4 +543,3 @@ export class DiscoveryRepository {
 }
 
 export default DiscoveryRepository;
-

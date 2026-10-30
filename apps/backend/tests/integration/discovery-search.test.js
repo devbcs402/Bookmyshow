@@ -182,9 +182,11 @@ describe('Discovery & Search Integration Tests', () => {
 
   describe('GET /api/v1/movies/:movieId/similar', () => {
     it('should return similar movies', async () => {
-      jest.spyOn(SimilarMoviesService, 'getSimilarMovies').mockResolvedValue([
-        { ...sampleMovie, _id: '65f1a2b3c4d5e6f7a8b9c0bb', similarityScore: 0.75 }
-      ]);
+      jest
+        .spyOn(SimilarMoviesService, 'getSimilarMovies')
+        .mockResolvedValue([
+          { ...sampleMovie, _id: '65f1a2b3c4d5e6f7a8b9c0bb', similarityScore: 0.75 }
+        ]);
 
       const res = await request(app).get(`/api/v1/movies/${sampleMovieId}/similar`);
 
@@ -211,9 +213,7 @@ describe('Discovery & Search Integration Tests', () => {
         totalPages: 1
       });
 
-      const res = await request(app).get(
-        '/api/v1/theatres/search?city=Rajkot&pincode=360005'
-      );
+      const res = await request(app).get('/api/v1/theatres/search?city=Rajkot&pincode=360005');
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
@@ -350,4 +350,3 @@ describe('Discovery & Search Integration Tests', () => {
     });
   });
 });
-

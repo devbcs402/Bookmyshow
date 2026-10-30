@@ -1,6 +1,10 @@
 import { DiscoveryRepository } from '../repositories/discovery.repository.js';
 import { DiscoveryCacheService } from './discovery-cache.service.js';
-import { DiscoveryCacheKeys, DiscoveryTTLs, DiscoveryDefaults } from '../constants/discovery.constants.js';
+import {
+  DiscoveryCacheKeys,
+  DiscoveryTTLs,
+  DiscoveryDefaults
+} from '../constants/discovery.constants.js';
 import { ValidationError } from '../../../common/errors/index.js';
 import { ErrorCodes } from '../../../common/constants/error-codes.js';
 
@@ -23,10 +27,7 @@ export class ShowDiscoveryService {
   }) {
     // 1. Date format validation if provided
     if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      throw new ValidationError(
-        'Date must be in YYYY-MM-DD format',
-        ErrorCodes.VALIDATION_ERROR
-      );
+      throw new ValidationError('Date must be in YYYY-MM-DD format', ErrorCodes.VALIDATION_ERROR);
     }
 
     // 2. Cache key generation

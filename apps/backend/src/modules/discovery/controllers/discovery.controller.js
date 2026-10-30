@@ -142,10 +142,9 @@ export class DiscoveryController {
    */
   static async getSimilarMovies(req, res, next) {
     try {
-      const movies = await SimilarMoviesService.getSimilarMovies(
-        req.params.movieId,
-        { limit: req.query.limit ? Number(req.query.limit) : 10 }
-      );
+      const movies = await SimilarMoviesService.getSimilarMovies(req.params.movieId, {
+        limit: req.query.limit ? Number(req.query.limit) : 10
+      });
       return ApiResponse.success(res, {
         message: 'Similar movies retrieved successfully',
         data: movies,
@@ -267,4 +266,3 @@ export class DiscoveryController {
 }
 
 export default DiscoveryController;
-

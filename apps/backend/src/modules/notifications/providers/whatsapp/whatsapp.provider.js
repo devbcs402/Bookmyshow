@@ -183,4 +183,3 @@ export class WhatsAppProviderAdapter {
 
 export const whatsAppProvider = new WhatsAppProviderAdapter();
 export default whatsAppProvider;
-

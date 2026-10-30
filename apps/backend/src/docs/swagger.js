@@ -774,7 +774,11 @@ const swaggerOptions = {
         SearchSuggestion: {
           type: 'object',
           properties: {
-            type: { type: 'string', enum: ['MOVIE', 'ACTOR', 'DIRECTOR', 'GENRE', 'THEATRE', 'CITY'], example: 'MOVIE' },
+            type: {
+              type: 'string',
+              enum: ['MOVIE', 'ACTOR', 'DIRECTOR', 'GENRE', 'THEATRE', 'CITY'],
+              example: 'MOVIE'
+            },
             title: { type: 'string', example: 'Dune: Part Two' },
             slug: { type: 'string', example: 'dune-part-two' },
             posterUrl: { type: 'string', example: 'https://cdn.example.com/poster.jpg' },
@@ -790,7 +794,10 @@ const swaggerOptions = {
             posterUrl: { type: 'string', example: 'https://cdn.example.com/chhello.jpg' },
             avgRating: { type: 'number', example: 8.7 },
             recommendationScore: { type: 'number', example: 85.5 },
-            explanation: { type: 'string', example: 'Recommended because it matches your preferred genres (Drama)' }
+            explanation: {
+              type: 'string',
+              example: 'Recommended because it matches your preferred genres (Drama)'
+            }
           }
         },
         RecentlyViewedMovie: {

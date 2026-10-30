@@ -76,4 +76,3 @@ export class AdminNotificationController {
 
 export const adminNotificationController = new AdminNotificationController();
 export default adminNotificationController;
-

@@ -8,7 +8,6 @@ import { ShowStatus } from '../../shows/show.constants.js';
 import {
   DiscoveryRecommendationTypes,
   RecommendationScores,
-  DiscoveryDefaults,
   DiscoveryCacheKeys,
   DiscoveryTTLs
 } from '../constants/discovery.constants.js';
@@ -19,7 +18,7 @@ export class RecommendationService {
    */
   static async getRecommendations({
     userId = null,
-    type = DiscoveryRecommendationTypes.FOR_YOU,
+    type: _type = DiscoveryRecommendationTypes.FOR_YOU,
     cityId = null,
     limit = 10
   }) {
@@ -36,7 +35,11 @@ export class RecommendationService {
 
     // If user has no history yet, fallback gracefully to anonymous recommendations
     if (bookingSignals.length === 0 && recentMovieIds.length === 0) {
-      return this.getAnonymousRecommendations({ cityId, limit, fallbackReason: 'Popular movies to get you started' });
+      return this.getAnonymousRecommendations({
+        cityId,
+        limit,
+        fallbackReason: 'Popular movies to get you started'
+      });
     }
 
     // 3. Extract preferred genres, languages, and watched movie IDs
@@ -57,7 +60,10 @@ export class RecommendationService {
         });
         (b.movieId.crew || []).forEach(c => {
           if (c.role === 'DIRECTOR') {
-            directorFrequency.set(c.name.toLowerCase(), (directorFrequency.get(c.name.toLowerCase()) || 0) + 1);
+            directorFrequency.set(
+              c.name.toLowerCase(),
+              (directorFrequency.get(c.name.toLowerCase()) || 0) + 1
+            );
           }
         });
       }
@@ -68,9 +74,7 @@ export class RecommendationService {
     });
 
     // Top preferred genres and languages
-    const topGenres = [...genreFrequency.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .map(e => e[0]);
+    const topGenres = [...genreFrequency.entries()].sort((a, b) => b[1] - a[1]).map(e => e[0]);
 
     // 4. Discover active shows in customer's city if provided
     let activeMovieIdsInCity = new Set();
@@ -161,7 +165,11 @@ export class RecommendationService {
   /**
    * Anonymous explainable recommendations based on popularity and show availability
    */
-  static async getAnonymousRecommendations({ cityId = null, limit = 10, fallbackReason = 'Trending near you' }) {
+  static async getAnonymousRecommendations({
+    cityId = null,
+    limit = 10,
+    fallbackReason = 'Trending near you'
+  }) {
     const cacheKey = `${DiscoveryCacheKeys.RECOMMENDATIONS_PREFIX}anon:${cityId || 'all'}:${limit}`;
     const cached = await DiscoveryCacheService.get(cacheKey);
     if (cached) {
@@ -206,4 +214,3 @@ export class RecommendationService {
 }
 
 export default RecommendationService;
-

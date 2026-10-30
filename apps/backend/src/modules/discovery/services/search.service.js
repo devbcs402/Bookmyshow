@@ -3,7 +3,11 @@ import { SearchRankingService } from './search-ranking.service.js';
 import { DiscoveryCacheService } from './discovery-cache.service.js';
 import { Show } from '../../shows/show.model.js';
 import { ShowStatus } from '../../shows/show.constants.js';
-import { DiscoveryCacheKeys, DiscoveryTTLs, DiscoveryDefaults } from '../constants/discovery.constants.js';
+import {
+  DiscoveryCacheKeys,
+  DiscoveryTTLs,
+  DiscoveryDefaults
+} from '../constants/discovery.constants.js';
 import { ValidationError } from '../../../common/errors/index.js';
 import { ErrorCodes } from '../../../common/constants/error-codes.js';
 

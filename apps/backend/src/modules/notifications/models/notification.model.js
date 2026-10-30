@@ -81,4 +81,3 @@ notificationSchema.index(
 
 export const Notification = mongoose.model('notifications', notificationSchema);
 export default Notification;
-

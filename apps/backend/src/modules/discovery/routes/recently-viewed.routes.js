@@ -24,10 +24,6 @@ router.get(
   RecentlyViewedController.getRecentlyViewed
 );
 
-router.delete(
-  '/',
-  RecentlyViewedController.clearRecentlyViewed
-);
+router.delete('/', RecentlyViewedController.clearRecentlyViewed);
 
 export default router;
-

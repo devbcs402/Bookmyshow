@@ -249,10 +249,7 @@ showSchema.index(
 );
 showSchema.index({ partnerId: 1, showDate: -1 }, { name: 'idx_shows_partner_tenant' });
 showSchema.index({ movieId: 1, status: 1 }, { name: 'idx_shows_movie_status' });
-showSchema.index(
-  { status: 1, startTime: 1, cityId: 1 },
-  { name: 'idx_shows_public_now_showing' }
-);
+showSchema.index({ status: 1, startTime: 1, cityId: 1 }, { name: 'idx_shows_public_now_showing' });
 
 export const Show = mongoose.model('shows', showSchema);
 export default Show;

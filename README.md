@@ -517,7 +517,50 @@ The complete architectural specifications, provider adapters (Email, SMS, WhatsA
 
 ---
 
-## 16. Development Phases Overview
+## 16. Master Discovery, Search & Recommendations Documentation Index (Part 13 Deliverables)
+
+The complete architectural specifications, query sanitization, ReDoS defense, ranking algorithms, explainable recommendation scoring, geospatial theatre radius searches, and Redis caching mechanics are organized in `docs/discovery/`:
+
+1. [01. Search Architecture & Discovery Topology](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/01-search-architecture.md)
+   - High-level topology, replaceable search provider design, and multi-dimensional discovery routing.
+2. [02. Movie Search API Specification](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/02-movie-search.md)
+   - Multi-field partial text search, safe regex escaping, allowlisted sorting, and query sanitization.
+3. [03. Movie Catalog Multi-Criteria Filtering](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/03-movie-filters.md)
+   - Multi-criteria filtering by genre, language, release year, duration bounds, certification, format, cast, and director.
+4. [04. Upcoming & Now Showing Movie Discovery](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/04-upcoming-and-now-showing.md)
+   - Real published shows as the source of truth, date & city scoping, and upcoming release chronologies.
+5. [05. Trending & Popular Movies Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/05-trending-and-popular.md)
+   - 48-hour booking velocity formula, 30-day sustained popularity formula, and verified high-quality fallback rules.
+6. [06. Theatre Discovery & Geospatial Search](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/06-theatre-discovery.md)
+   - Administrative city/area/pincode filtering, MongoDB `2dsphere` spherical radius searches (`$geoWithin`), and tenant secret redaction.
+7. [07. Show Discovery & Schedule Exploration](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/07-show-discovery.md)
+   - Published bookable show query filters, theatre timezone awareness, format filtering, and seat availability indicators.
+8. [08. Location-Based Discovery Landing Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/08-location-based-discovery.md)
+   - Single round-trip regional discovery bundling now-showing movies, local cinemas, and regional trending titles.
+9. [09. Rule-Based Explainable Recommendation Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/09-recommendation-engine.md)
+   - Explainable scoring formula (+30 genre, +20 language, +15 director, +25 city shows, +10 rating), customer signals, and guest fallback.
+10. [10. Content-Based Similar Movies Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/10-similar-movies.md)
+    - Weighted Jaccard similarity across genres ($40\%$), languages ($25\%$), cast ($20\%$), and director ($15\%$) with self-exclusion.
+11. [11. Customer Recently Viewed History](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/11-recently-viewed.md)
+    - In-place deduplication, timestamp updating, 50-item FIFO cap enforcement, and privacy-compliant clearing.
+12. [12. Real-Time Search Suggestions & Autocomplete](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/12-search-suggestions.md)
+    - Low-latency typed suggestions (`MOVIE`, `ACTOR`, `DIRECTOR`, `GENRE`, `THEATRE`, `CITY`) with 15-minute Redis caching.
+13. [13. Centralized Search Relevance & Ranking Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/13-search-ranking.md)
+    - Weighted composite relevance formula, title prefix/substring boosting, show availability bonus, and deterministic tie-breaking.
+14. [14. Redis Distributed Caching & Invalidation Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/14-redis-caching.md)
+    - Cache key taxonomy, TTL policies, and automated targeted invalidation on movie and show lifecycle mutations.
+15. [15. Database Indexing & Query Optimization](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/15-search-performance.md)
+    - Compound indexes on movies, shows, theatres, bookings, and recently viewed collections to eliminate collection scans.
+16. [16. Security, Privacy & Search Abuse Defense](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/16-security-and-privacy.md)
+    - ReDoS defense, catalogue visibility firewall, customer recommendation isolation, and tenant boundary protection.
+17. [17. Discovery & Search Testing Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/17-testing-report.md)
+    - 55 automated tests across 8 suites (unit, integration, scenarios) with 100% pass rate.
+18. [18. Part 13 Discovery Module Review & Final Sign-Off](file:///d:/YASH%20KACHA/Bookmyshow/docs/discovery/18-discovery-module-review.md)
+    - Architecture sign-off, checklist verification, and readiness audit for Part 14.
+
+---
+
+## 17. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
@@ -532,15 +575,15 @@ Phase 09: Seat Availability & Temporary Seat Locking System (COMPLETED)
 Phase 10: Booking Engine Module (Production-Grade) (COMPLETED)
 Phase 11: Payment Processing & Gateway Integration (Razorpay) (COMPLETED)
 Phase 12: Notification System & Omnichannel Alerts (COMPLETED)
-Phase 13: Search, Filtering, Discovery & Recommendation Engine (PENDING APPROVAL)
-Phase 14: Customer & Theatre Partner Frontend Applications
-Phase 15: Performance, Chaos & Load Testing
-Phase 16: Production Deployment & Observability
+Phase 13: Search, Filtering, Discovery & Recommendation Engine (COMPLETED)
+Phase 14: Production Hardening, Analytics, Audit Logs, Security Review, Performance Optimization, Deployment and CI/CD (PENDING APPROVAL)
+Phase 15: Customer & Theatre Partner Frontend Applications
+Phase 16: Performance, Chaos & Load Testing
 ```
 
 ---
 
-## 17. Architecture Status & Quality Gates
+## 18. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-locking and zero double-booking under race conditions via Redis Lua scripts, atomic MongoDB transactions, and compound unique partial indexes.
@@ -555,11 +598,12 @@ Phase 16: Production Deployment & Observability
 - **Booking Engine Subsystem**: Dual-phase reservation transition, centralized status state machine (`BookingStatusService`), server-side dynamic pricing with epsilon rounding, client idempotency caching with SHA-256 fingerprinting, distributed expiration worker via Redis Sorted Sets (`bookings:expirations`), and tamper-proof HMAC-SHA256 gate QR admittance tokens.
 - **Payment Processing & Gateway Integration**: Official Razorpay Node.js SDK integration with server-side paise order generation, constant-time HMAC-SHA256 signature verification (`crypto.timingSafeEqual`), untampered raw body webhook processing (`express.json` verify hook), multi-document MongoDB ACID confirmation transactions, Zero PCI-DSS SAQ A compliance, multi-tenant BOLA defense, and automated reconciliation for orphan orders and late captures.
 - **Notification System & Omnichannel Alerts**: Centralized decoupled notification architecture across Email (SMTP/Resend/Mock), SMS (Fast2SMS/Twilio/Mock with Indian DLT compliance), WhatsApp (Meta Business Platform Cloud API), and In-App delivery. Dual-mode Redis and in-memory background queues, exponential backoff retries ($5 \times 2^{n-1}$), dead-letter queues, HTML sanitization, multi-lingual localization (en, hi, gu), private Socket.IO user rooms (`user:<userId>`), and strict BOLA defense.
-- **Test Quality Gate**: **538 automated tests across 69 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Search, Discovery & Recommendation Engine**: Centralized discovery system with safe regex escaping, ReDoS defense, multi-criteria filtering, verified show availability for now-showing movies, 48-hour booking velocity trending, 30-day sustained popularity, weighted Jaccard similar movies, geospatial `2dsphere` theatre radius searches, explainable rule-based recommendations with natural-language reasons, low-latency autocomplete suggestions, in-place recently viewed history management, and multi-tier Redis caching with automated invalidation.
+- **Test Quality Gate**: **593 automated tests across 77 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
 
 ---
 
 > [!IMPORTANT]
-> **Parts 1 through 12 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, show management & scheduling, seat availability & temporary seat locking, production-grade booking engine, Razorpay payment gateway integration, and the centralized omnichannel notification system are fully implemented, verified, and documented.
-> In strict accordance with the project instructions, **Part 13: Search, Filtering, Discovery & Recommendation Engine** will commence only after user review and approval.
+> **Parts 1 through 13 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, show management & scheduling, seat availability & temporary seat locking, production-grade booking engine, Razorpay payment gateway integration, centralized omnichannel notification system, and the search, discovery & recommendation engine are fully implemented, verified, and documented.
+> In strict accordance with the project instructions, **Part 14: Production Hardening, Analytics, Audit Logs, Security Review, Performance Optimization, Deployment and CI/CD** will commence only after user review and approval.
 

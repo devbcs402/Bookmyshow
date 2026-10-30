@@ -4,7 +4,10 @@ export class SearchRankingService {
   /**
    * Calculate relevance and ranking score for a movie against search context
    */
-  static calculateMovieScore(movie, { query = '', activeMovieIds = new Set(), weights = RankingWeights }) {
+  static calculateMovieScore(
+    movie,
+    { query = '', activeMovieIds = new Set(), weights = RankingWeights }
+  ) {
     let textScore = 0;
     const lowerQuery = query.toLowerCase().trim();
 
@@ -101,4 +104,3 @@ export class SearchRankingService {
 }
 
 export default SearchRankingService;
-

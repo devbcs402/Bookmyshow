@@ -36,4 +36,3 @@ export const RecentlyViewed =
   mongoose.models.recently_viewed || mongoose.model('recently_viewed', recentlyViewedSchema);
 
 export default RecentlyViewed;
-

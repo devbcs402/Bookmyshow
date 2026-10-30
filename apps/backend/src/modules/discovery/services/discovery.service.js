@@ -93,10 +93,7 @@ export class DiscoveryService {
   /**
    * Get trending movies based on recent booking velocity (last 48h) with fallback
    */
-  static async getTrendingMovies({
-    cityId = null,
-    limit = DiscoveryDefaults.DEFAULT_LIMIT
-  } = {}) {
+  static async getTrendingMovies({ cityId = null, limit = DiscoveryDefaults.DEFAULT_LIMIT } = {}) {
     const cacheKey = `${DiscoveryCacheKeys.TRENDING_PREFIX}${cityId || 'all'}:${limit}`;
     const cached = await DiscoveryCacheService.get(cacheKey);
     if (cached) {
@@ -182,10 +179,7 @@ export class DiscoveryService {
   /**
    * Get popular movies based on sustained booking volume & review rating (last 30d)
    */
-  static async getPopularMovies({
-    cityId = null,
-    limit = DiscoveryDefaults.DEFAULT_LIMIT
-  } = {}) {
+  static async getPopularMovies({ cityId = null, limit = DiscoveryDefaults.DEFAULT_LIMIT } = {}) {
     const cacheKey = `${DiscoveryCacheKeys.POPULAR_PREFIX}${cityId || 'all'}:${limit}`;
     const cached = await DiscoveryCacheService.get(cacheKey);
     if (cached) {
@@ -309,4 +303,3 @@ export class DiscoveryService {
 }
 
 export default DiscoveryService;
-

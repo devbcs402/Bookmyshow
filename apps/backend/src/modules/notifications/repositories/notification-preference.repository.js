@@ -16,4 +16,3 @@ export class NotificationPreferenceRepository {
 
 export const notificationPreferenceRepository = new NotificationPreferenceRepository();
 export default notificationPreferenceRepository;
-

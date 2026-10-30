@@ -68,4 +68,3 @@ export const NotificationPreference = mongoose.model(
   notificationPreferenceSchema
 );
 export default NotificationPreference;
-

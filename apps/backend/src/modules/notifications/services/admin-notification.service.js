@@ -155,4 +155,3 @@ export class AdminNotificationService {
 
 export const adminNotificationService = new AdminNotificationService();
 export default adminNotificationService;
-

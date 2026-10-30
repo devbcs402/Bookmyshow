@@ -1,9 +1,14 @@
 import { z } from 'zod';
 import { CensorRating, MovieFormat } from '../../movies/movie.constants.js';
-import { DiscoverySortFields, DiscoveryRecommendationTypes } from '../constants/discovery.constants.js';
+import {
+  DiscoverySortFields,
+  DiscoveryRecommendationTypes
+} from '../constants/discovery.constants.js';
 
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
-const mongoIdSchema = z.string().regex(objectIdRegex, 'Must be a valid 24-character hexadecimal ObjectId');
+const mongoIdSchema = z
+  .string()
+  .regex(objectIdRegex, 'Must be a valid 24-character hexadecimal ObjectId');
 
 // 1. Movie Search Query Validation
 export const movieSearchQueryValidation = z.object({
@@ -31,8 +36,16 @@ export const movieFilterQueryValidation = z.object({
   status: z.enum(['APPROVED', 'UPCOMING', 'NOW_SHOWING']).optional(),
   durationMin: z.coerce.number().int().min(1).max(600).optional(),
   durationMax: z.coerce.number().int().min(1).max(600).optional(),
-  releaseDateFrom: z.string().datetime({ offset: true }).or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).optional(),
-  releaseDateTo: z.string().datetime({ offset: true }).or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).optional(),
+  releaseDateFrom: z
+    .string()
+    .datetime({ offset: true })
+    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/))
+    .optional(),
+  releaseDateTo: z
+    .string()
+    .datetime({ offset: true })
+    .or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/))
+    .optional(),
   cast: z.string().max(100).optional(),
   director: z.string().max(100).optional(),
   format: z.nativeEnum(MovieFormat).optional(),
@@ -53,7 +66,10 @@ export const upcomingQueryValidation = z.object({
 // 4. Now Showing Movies Query Validation
 export const nowShowingQueryValidation = z.object({
   cityId: mongoIdSchema.optional(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format').optional(),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
+    .optional(),
   genre: z.string().max(50).optional(),
   language: z.string().max(50).optional(),
   page: z.coerce.number().int().min(1).default(1),
@@ -77,7 +93,10 @@ export const theatreSearchQueryValidation = z.object({
   cityId: mongoIdSchema.optional(),
   city: z.string().max(100).optional(),
   area: z.string().max(100).optional(),
-  pincode: z.string().regex(/^\d{6}$/, 'Indian pincode must be exactly 6 digits').optional(),
+  pincode: z
+    .string()
+    .regex(/^\d{6}$/, 'Indian pincode must be exactly 6 digits')
+    .optional(),
   latitude: z.coerce.number().min(-90).max(90).optional(),
   longitude: z.coerce.number().min(-180).max(180).optional(),
   radiusKm: z.coerce.number().min(1).max(100).default(15),
@@ -92,7 +111,10 @@ export const showSearchQueryValidation = z.object({
   theatreId: mongoIdSchema.optional(),
   branchId: mongoIdSchema.optional(),
   cityId: mongoIdSchema.optional(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format').optional(),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
+    .optional(),
   language: z.string().max(50).optional(),
   format: z.string().max(20).optional(),
   startTimeFrom: z.string().optional(),
@@ -153,4 +175,3 @@ export default {
   recentlyViewedQueryValidation,
   locationDiscoveryQueryValidation
 };
-

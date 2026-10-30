@@ -17,7 +17,11 @@ export class DiscoveryCacheService {
       }
       return JSON.parse(data);
     } catch (error) {
-      logger.debug({ msg: 'Redis cache read error, falling back to database', key, error: error.message });
+      logger.debug({
+        msg: 'Redis cache read error, falling back to database',
+        key,
+        error: error.message
+      });
       return null;
     }
   }
@@ -34,7 +38,11 @@ export class DiscoveryCacheService {
       await redis.set(key, JSON.stringify(value), 'EX', ttlSeconds);
       return true;
     } catch (error) {
-      logger.debug({ msg: 'Redis cache write error, continuing without cache', key, error: error.message });
+      logger.debug({
+        msg: 'Redis cache write error, continuing without cache',
+        key,
+        error: error.message
+      });
       return false;
     }
   }
@@ -81,13 +89,21 @@ export class DiscoveryCacheService {
         stream.on('end', async () => {
           if (keysToDelete.length > 0) {
             await redis.del(...keysToDelete);
-            logger.info({ msg: 'Invalidated cache keys matching pattern', pattern, count: keysToDelete.length });
+            logger.info({
+              msg: 'Invalidated cache keys matching pattern',
+              pattern,
+              count: keysToDelete.length
+            });
           }
           resolve(true);
         });
 
         stream.on('error', err => {
-          logger.warn({ msg: 'Scan stream error during cache invalidation', pattern, error: err.message });
+          logger.warn({
+            msg: 'Scan stream error during cache invalidation',
+            pattern,
+            error: err.message
+          });
           resolve(false);
         });
       });
@@ -124,4 +140,3 @@ export class DiscoveryCacheService {
 }
 
 export default DiscoveryCacheService;
-

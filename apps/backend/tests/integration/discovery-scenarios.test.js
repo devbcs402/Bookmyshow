@@ -5,11 +5,9 @@ import { Movie } from '../../src/modules/movies/model/movie.model.js';
 import { Show } from '../../src/modules/shows/show.model.js';
 import { Theatre } from '../../src/modules/theatres/model/theatre.model.js';
 import { MovieStatus } from '../../src/modules/movies/movie.constants.js';
-import { ShowStatus } from '../../src/modules/shows/show.constants.js';
 import { TheatreStatus } from '../../src/modules/theatres/theatre.constants.js';
 import DiscoveryRepository from '../../src/modules/discovery/repositories/discovery.repository.js';
 import DiscoveryCacheService from '../../src/modules/discovery/services/discovery-cache.service.js';
-import RecommendationService from '../../src/modules/discovery/services/recommendation.service.js';
 import RecentlyViewedRepository from '../../src/modules/discovery/repositories/recently-viewed.repository.js';
 import AuthRepository from '../../src/modules/auth/auth.repository.js';
 import { Roles } from '../../src/modules/auth/auth.constants.js';
@@ -151,20 +149,22 @@ describe('Discovery Critical Scenarios Integration Tests', () => {
   describe('Scenario 4: Recommendation Privacy Across Customers', () => {
     it('should strictly isolate Customer A personal history from Customer B recommendation results', async () => {
       // Mock Customer A booking signals: Gujarati Drama
-      jest.spyOn(DiscoveryRepository, 'findCustomerBookingSignals').mockImplementation(async cId => {
-        if (cId === customerAId) {
-          return [
-            {
-              movieId: {
-                _id: '65f1a2b3c4d5e6f7a8b9c0aa',
-                genreSlugs: ['drama'],
-                languageIds: ['lang_gu']
+      jest
+        .spyOn(DiscoveryRepository, 'findCustomerBookingSignals')
+        .mockImplementation(async cId => {
+          if (cId === customerAId) {
+            return [
+              {
+                movieId: {
+                  _id: '65f1a2b3c4d5e6f7a8b9c0aa',
+                  genreSlugs: ['drama'],
+                  languageIds: ['lang_gu']
+                }
               }
-            }
-          ];
-        }
-        return []; // Customer B has no drama history
-      });
+            ];
+          }
+          return []; // Customer B has no drama history
+        });
 
       jest.spyOn(RecentlyViewedRepository, 'getRecentMovieIds').mockResolvedValue([]);
       jest.spyOn(Show, 'distinct').mockResolvedValue([]);
@@ -243,4 +243,3 @@ describe('Discovery Critical Scenarios Integration Tests', () => {
     });
   });
 });
-

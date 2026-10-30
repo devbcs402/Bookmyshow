@@ -120,4 +120,3 @@ export class NotificationController {
 
 export const notificationController = new NotificationController();
 export default notificationController;
-

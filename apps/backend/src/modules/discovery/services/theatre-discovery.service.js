@@ -1,6 +1,10 @@
 import { DiscoveryRepository } from '../repositories/discovery.repository.js';
 import { DiscoveryCacheService } from './discovery-cache.service.js';
-import { DiscoveryCacheKeys, DiscoveryTTLs, DiscoveryDefaults } from '../constants/discovery.constants.js';
+import {
+  DiscoveryCacheKeys,
+  DiscoveryTTLs,
+  DiscoveryDefaults
+} from '../constants/discovery.constants.js';
 import { ValidationError } from '../../../common/errors/index.js';
 import { ErrorCodes } from '../../../common/constants/error-codes.js';
 

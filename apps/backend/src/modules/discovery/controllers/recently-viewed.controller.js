@@ -8,10 +8,7 @@ export class RecentlyViewedController {
    */
   static async recordMovieView(req, res, next) {
     try {
-      const entry = await RecentlyViewedService.recordMovieView(
-        req.user.id,
-        req.params.movieId
-      );
+      const entry = await RecentlyViewedService.recordMovieView(req.user.id, req.params.movieId);
       return ApiResponse.created(res, {
         message: 'Movie added to recently viewed history',
         data: entry
@@ -27,10 +24,7 @@ export class RecentlyViewedController {
    */
   static async getRecentlyViewed(req, res, next) {
     try {
-      const result = await RecentlyViewedService.getRecentlyViewed(
-        req.user.id,
-        req.query
-      );
+      const result = await RecentlyViewedService.getRecentlyViewed(req.user.id, req.query);
       return ApiResponse.success(res, {
         message: 'Recently viewed movies retrieved successfully',
         data: result.movies,
@@ -64,4 +58,3 @@ export class RecentlyViewedController {
 }
 
 export default RecentlyViewedController;
-

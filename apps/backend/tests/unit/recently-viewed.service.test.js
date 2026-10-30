@@ -80,4 +80,3 @@ describe('RecentlyViewedService Unit Tests', () => {
     });
   });
 });
-

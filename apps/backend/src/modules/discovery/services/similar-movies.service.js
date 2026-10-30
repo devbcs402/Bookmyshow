@@ -2,7 +2,11 @@ import { Movie } from '../../movies/model/movie.model.js';
 import { DiscoveryRepository } from '../repositories/discovery.repository.js';
 import { DiscoveryCacheService } from './discovery-cache.service.js';
 import { PublicVisibleStatuses } from '../../movies/movie.constants.js';
-import { DiscoveryCacheKeys, DiscoveryTTLs, SimilarityWeights } from '../constants/discovery.constants.js';
+import {
+  DiscoveryCacheKeys,
+  DiscoveryTTLs,
+  SimilarityWeights
+} from '../constants/discovery.constants.js';
 import { NotFoundError } from '../../../common/errors/index.js';
 import { ErrorCodes } from '../../../common/constants/error-codes.js';
 

@@ -85,4 +85,3 @@ export class NotificationSocketService {
 }
 
 export default NotificationSocketService;
-

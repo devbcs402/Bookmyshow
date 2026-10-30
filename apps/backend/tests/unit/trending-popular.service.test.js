@@ -18,9 +18,9 @@ describe('Trending and Popular Discovery Unit Tests', () => {
       jest.spyOn(DiscoveryCacheService, 'set').mockResolvedValue(true);
 
       // Aggregations: movie 1 has 5 bookings & 10 seats => score: 5*2 + 10 = 20
-      jest.spyOn(DiscoveryRepository, 'aggregateTrendingBookings').mockResolvedValue([
-        { movieId: movieId1, bookingCount: 5, totalSeats: 10 }
-      ]);
+      jest
+        .spyOn(DiscoveryRepository, 'aggregateTrendingBookings')
+        .mockResolvedValue([{ movieId: movieId1, bookingCount: 5, totalSeats: 10 }]);
 
       const movieDoc = {
         _id: movieId1,
@@ -81,9 +81,9 @@ describe('Trending and Popular Discovery Unit Tests', () => {
       jest.spyOn(DiscoveryCacheService, 'get').mockResolvedValue(null);
       jest.spyOn(DiscoveryCacheService, 'set').mockResolvedValue(true);
 
-      jest.spyOn(DiscoveryRepository, 'aggregatePopularBookings').mockResolvedValue([
-        { movieId: movieId1, totalBookings: 100, totalRevenue: 50000 }
-      ]);
+      jest
+        .spyOn(DiscoveryRepository, 'aggregatePopularBookings')
+        .mockResolvedValue([{ movieId: movieId1, totalBookings: 100, totalRevenue: 50000 }]);
 
       const movieDoc = {
         _id: movieId1,
@@ -110,4 +110,3 @@ describe('Trending and Popular Discovery Unit Tests', () => {
     });
   });
 });
-

@@ -110,4 +110,3 @@ export class RecentlyViewedRepository {
 }
 
 export default RecentlyViewedRepository;
-

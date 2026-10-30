@@ -118,4 +118,3 @@ export const NotificationDelivery = mongoose.model(
   notificationDeliverySchema
 );
 export default NotificationDelivery;
-
