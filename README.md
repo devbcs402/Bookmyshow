@@ -249,38 +249,67 @@ All identity, authorization, session, and security mechanics are documented in `
 
 ---
 
-## 8. Development Phases Overview
+## 8. Master Movie Management Documentation Index (Part 5 Deliverables)
+
+The movie catalog, taxonomy, media handling, and administrative approval pipelines are documented in `docs/movies/`:
+
+1. [01. Movie Management Module Overview](file:///d:/YASH%20KACHA/Bookmyshow/docs/movies/01-movie-module-overview.md)
+   - Module scope, architecture, core entities, and layered service-repository design.
+2. [02. Movie Database Design & Schemas](file:///d:/YASH%20KACHA/Bookmyshow/docs/movies/02-movie-database-design.md)
+   - Mongoose schemas for `movies`, `genres`, and `languages`, indexing strategy, and denormalized `genreSlugs`.
+3. [03. Business Rules, Lifecycle & Invariants](file:///d:/YASH%20KACHA/Bookmyshow/docs/movies/03-movie-business-rules.md)
+   - Status state machine transitions, dynamic theatrical status derivation, and referential deletion protection.
+4. [04. Movie REST API Documentation](file:///d:/YASH%20KACHA/Bookmyshow/docs/movies/04-movie-api-documentation.md)
+   - Complete specifications for all 19 public and administrative movie, genre, and language endpoints.
+5. [05. Role-Based Access Control (RBAC) & Permissions](file:///d:/YASH%20KACHA/Bookmyshow/docs/movies/05-movie-permissions.md)
+   - Permissions matrix, role boundaries for Theatre Owners vs Super Admins, and middleware guards.
+6. [06. Media Management Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/movies/06-movie-media-management.md)
+   - Cloud storage abstraction, 5MB image limits, aspect ratios, and external video streaming validation.
+7. [07. Search, Multi-Facet Filtering & Pagination](file:///d:/YASH%20KACHA/Bookmyshow/docs/movies/07-movie-search-filter-pagination.md)
+   - Text search indexes, regex sanitization, multi-facet query construction, and pagination boundaries.
+8. [08. Movie Module Testing & QA Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/movies/08-movie-testing-report.md)
+   - Detailed breakdown of 5 dedicated test suites (44 tests) and 160 total passing tests across 22 suites.
+9. [09. Security Review & Threat Assessment](file:///d:/YASH%20KACHA/Bookmyshow/docs/movies/09-movie-security-review.md)
+   - OWASP API 2023 threat assessment, NoSQL injection defenses, and mass assignment mitigation.
+10. [10. Movie Module Final Review & Sign-Off Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/movies/10-movie-module-review-report.md)
+    - Architecture sign-off, transition readiness for Part 6, and completion summary.
+
+---
+
+## 9. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
 Phase 02: Database Schemas, Validation & Seeding (COMPLETED)
 Phase 03: Backend Foundation & Project Setup (COMPLETED)
 Phase 04: Authentication, Security & RBAC Implementation (COMPLETED)
-Phase 05: Master Catalogs, Movies & Screen Visualizer (PENDING APPROVAL)
-Phase 06: High-Concurrency Booking Engine & Redis Locks
-Phase 07: Payment Gateway & Asynchronous Webhooks
-Phase 08: Digital Ticket QR Engine & Notifications
-Phase 09: Theatre Partner & Super Admin Portals
-Phase 10: Customer Web Application
-Phase 11: Performance, Chaos & Load Testing
-Phase 12: Production Deployment & Observability
+Phase 05: Movie Management Module & Taxonomies (COMPLETED)
+Phase 06: Theatre Management, Screens & Seating Layouts (PENDING APPROVAL)
+Phase 07: High-Concurrency Booking Engine & Redis Locks
+Phase 08: Payment Gateway & Asynchronous Webhooks
+Phase 09: Digital Ticket QR Engine & Notifications
+Phase 10: Theatre Partner & Super Admin Portals
+Phase 11: Customer Web Application
+Phase 12: Performance, Chaos & Load Testing
+Phase 13: Production Deployment & Observability
 ```
 
 ---
 
-## 9. Architecture Status & Quality Gates
+## 10. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-booking under race conditions via Redis Lua scripts + MongoDB ACID transactions.
 - **Tenancy Boundary**: Absolute isolation by `partnerId` / `theatreId`, enforced at middleware (`requireTenantScope`) and repository layers.
 - **Authentication & Tokens**: Dual-token JWT (15m in-memory access token, 7d rotating refresh token in `HttpOnly, Secure, SameSite=Strict` cookie) with Token Family reuse detection.
 - **Role-Based Access Control**: 5 platform roles, 23 fine-grained permissions, and immutable server-side role assignment.
+- **Movie Catalog & Taxonomy**: Normalized `genres` and `languages`, denormalized `genreSlugs` indexing, 8-stage movie status lifecycle with dynamic theatrical state derivation, and Cloudinary media abstraction.
 - **Payment Compliance**: Zero PCI-DSS footprint; Razorpay webhook verification via HMAC-SHA256 constant-time comparison.
-- **Test Quality Gate**: 116 automated tests across 17 test suites passing (100% pass rate). Zero ESLint errors, 100% Prettier compliance.
+- **Test Quality Gate**: **160 automated tests across 22 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
 
 ---
 
 > [!IMPORTANT]
-> **Part 1, Part 2, Part 3 & Part 4 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, and multi-tenant isolation are fully implemented, verified, and documented.
-> In accordance with project instructions, **Part 5: Movie Management Module** will commence only after user review and approval.
+> **Part 1, Part 2, Part 3, Part 4 & Part 5 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, and the movie management module are fully implemented, verified, and documented.
+> In strict accordance with the project instructions, **Part 6: Theatre Management Module** will commence only after user review and approval.
 

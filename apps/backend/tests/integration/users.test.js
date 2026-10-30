@@ -129,4 +129,3 @@ describe('Users Endpoints Integration Tests', () => {
     });
   });
 });
-

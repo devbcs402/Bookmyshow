@@ -127,4 +127,3 @@ describe('Auth Utils Unit Tests', () => {
     });
   });
 });
-

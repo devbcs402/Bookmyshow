@@ -56,4 +56,3 @@ sessionSchema.index({ familyId: 1, isRevoked: 1 });
 
 export const Session = mongoose.model('user_sessions', sessionSchema);
 export default Session;
-

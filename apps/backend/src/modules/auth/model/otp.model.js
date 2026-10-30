@@ -57,4 +57,3 @@ otpVerificationSchema.index({ target: 1, purpose: 1, isVerified: 1 });
 
 export const OtpVerification = mongoose.model('otp_verifications', otpVerificationSchema);
 export default OtpVerification;
-

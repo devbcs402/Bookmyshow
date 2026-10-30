@@ -64,6 +64,50 @@ const swaggerOptions = {
             },
             requestId: { type: 'string', example: 'c6a32d1f-8e4b-4a5c-9c71-2b0f4a8d9e23' }
           }
+        },
+        Movie: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0d1' },
+            title: { type: 'string', example: 'Interstellar' },
+            slug: { type: 'string', example: 'interstellar' },
+            synopsis: {
+              type: 'string',
+              example: 'A team of explorers travel through a wormhole in space...'
+            },
+            durationMins: { type: 'integer', example: 169 },
+            releaseDate: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-11-05T00:00:00.000Z'
+            },
+            censorRating: { type: 'string', example: 'UA_13_PLUS' },
+            genres: { type: 'array', items: { type: 'object' } },
+            languages: { type: 'array', items: { type: 'object' } },
+            availableFormats: { type: 'array', items: { type: 'string', example: 'IMAX_2D' } },
+            posterUrl: { type: 'string', example: 'https://res.cloudinary.com/bms/poster.jpg' },
+            status: { type: 'string', example: 'NOW_SHOWING' },
+            avgRating: { type: 'number', example: 9.2 }
+          }
+        },
+        Genre: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0d2' },
+            name: { type: 'string', example: 'Sci-Fi' },
+            slug: { type: 'string', example: 'sci-fi' },
+            isActive: { type: 'boolean', example: true }
+          }
+        },
+        Language: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0d3' },
+            name: { type: 'string', example: 'Hindi' },
+            code: { type: 'string', example: 'hi' },
+            nativeName: { type: 'string', example: 'हिन्दी' },
+            isActive: { type: 'boolean', example: true }
+          }
         }
       }
     }

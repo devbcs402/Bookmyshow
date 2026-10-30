@@ -51,4 +51,3 @@ describe('Notification Providers Unit Tests', () => {
     });
   });
 });
-
