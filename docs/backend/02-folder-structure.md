@@ -114,3 +114,4 @@ flowchart TD
    - `server.js` is the executable entry point that bootstraps database connections, binds Socket.IO, listens on the designated TCP port, and registers graceful termination listeners.
 2. **Standardized Domain Modules**:
    - Starting in Part 4, business features reside in `src/modules/<module-name>/` following the 7-layer design specified in Part 1 (`model`, `controller`, `service`, `repository`, `routes`, `validation`, `tests`).
+

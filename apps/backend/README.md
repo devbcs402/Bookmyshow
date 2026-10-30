@@ -74,3 +74,4 @@ docker-compose logs -f backend
 - **Comprehensive Health Check**: [`http://localhost:5000/api/v1/health`](http://localhost:5000/api/v1/health)
 - **Liveness Probe (Kubernetes)**: [`http://localhost:5000/api/v1/health/live`](http://localhost:5000/api/v1/health/live)
 - **Readiness Probe (Kubernetes)**: [`http://localhost:5000/api/v1/health/ready`](http://localhost:5000/api/v1/health/ready)
+

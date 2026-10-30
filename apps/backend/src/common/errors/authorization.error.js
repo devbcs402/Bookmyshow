@@ -13,3 +13,4 @@ export class AuthorizationError extends AppError {
 }
 
 export default AuthorizationError;
+

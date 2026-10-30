@@ -14,3 +14,4 @@ router.use('/health', healthRoutes);
 // router.use('/bookings', bookingRoutes);
 
 export default router;
+

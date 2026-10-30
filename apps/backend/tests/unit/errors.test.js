@@ -72,3 +72,4 @@ describe('Custom Error Classes Unit Tests', () => {
     expect(error.name).toBe('DatabaseError');
   });
 });
+

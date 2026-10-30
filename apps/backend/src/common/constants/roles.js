@@ -7,3 +7,4 @@ export const Roles = Object.freeze({
 });
 
 export default Roles;
+

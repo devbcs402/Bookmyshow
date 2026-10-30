@@ -21,3 +21,4 @@ export const HttpStatus = Object.freeze({
 });
 
 export default HttpStatus;
+

@@ -169,34 +169,79 @@ The complete enterprise database architecture and Mongoose schema specifications
 
 ---
 
-## 6. Development Phases Overview
+## 6. Backend Foundation & Infrastructure Architecture (Part 3 Deliverables)
+
+The core backend foundation, configuration pipelines, and test suites are documented in `docs/backend/`:
+
+1. [01. Backend Foundation & Initial Project Setup](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/01-backend-setup.md)
+   - ES Modules configuration, dependency matrix, npm scripts, and tooling standards.
+2. [02. Backend Modular Folder Structure](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/02-folder-structure.md)
+   - Detailed layout of `apps/backend/` and 7-layer architectural separation of concerns.
+3. [03. Centralized Environment Configuration](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/03-environment-configuration.md)
+   - Fail-fast Zod schema parsing, variable dictionary, and secret protection.
+4. [04. Express Application Architecture & Pipeline](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/04-express-architecture.md)
+   - Deterministic 11-step middleware execution pipeline and separation of `app.js` from `server.js`.
+5. [05. Centralized Error Handling & Exception Taxonomy](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/05-error-handling.md)
+   - Standard error response envelopes, custom error class hierarchy, and Mongoose error mappers.
+6. [06. Standard API Response Formats & Pagination](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/06-api-response-standards.md)
+   - Static `ApiResponse` builders, success envelopes, and `PaginationMeta` calculations.
+7. [07. MongoDB Connection Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/07-database-connection.md)
+   - Connection pool management (`maxPoolSize: 50`), lifecycle listeners, and ping probes.
+8. [08. Redis Connection Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/08-redis-connection.md)
+   - `ioredis` client configuration, exponential backoff reconnection, and cache roles.
+9. [09. Structured Logging System & Telemetry](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/09-logging-system.md)
+   - Low-overhead Pino logging, mandatory PII/credential redactions, and request ID correlation.
+10. [10. Security Middleware Foundation](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/10-security-foundation.md)
+    - Helmet security headers, CORS origin whitelisting, payload size bounding, and sliding rate limiters.
+11. [11. Request Validation Infrastructure with Zod](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/11-validation-system.md)
+    - Reusable `validate` middleware parsing request bodies, params, and queries with field-level diagnostics.
+12. [12. System Health, Readiness & Liveness Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/12-health-checks.md)
+    - Health endpoints: `/api/v1/health`, `/api/v1/health/live`, `/api/v1/health/ready`.
+13. [13. Interactive Swagger & OpenAPI 3.0 Documentation](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/13-swagger-setup.md)
+    - OpenAPI 3.0 documentation mounted at `/api/v1/docs` with `BearerAuth` security scheme.
+14. [14. Real-time Socket.IO Foundation](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/14-socket-foundation.md)
+    - Decoupled WebSocket server, handshake authentication integration hook, and event constants.
+15. [15. Graceful Server Shutdown & Process Lifecycle](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/15-graceful-shutdown.md)
+    - Coordinated draining of HTTP connections, Socket.IO, Redis, and MongoDB with a 10s failsafe timer.
+16. [16. Docker Containerization & Local Compose](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/16-docker-setup.md)
+    - Multi-stage Alpine Dockerfile, non-root user execution, and multi-service `docker-compose.yml`.
+17. [17. Automated Testing Strategy & Jest Test Harness](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/17-testing-foundation.md)
+    - Test execution commands, Supertest integration harness, and 100% passing test metrics (44 tests).
+18. [18. Backend Foundation Review Report & Readiness Audit](file:///d:/YASH%20KACHA/Bookmyshow/docs/backend/18-backend-foundation-review.md)
+    - Final review report, verified endpoints, security checklist, and Part 3 sign-off audit.
+
+---
+
+## 7. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
 Phase 02: Database Schemas, Validation & Seeding (COMPLETED)
-Phase 03: Auth, Token Rotation & RBAC Engine (PENDING APPROVAL)
-Phase 04: Master Catalogs, Theatres & Screen Visualizer
-Phase 05: High-Concurrency Booking Engine & Redis Locks
-Phase 06: Payment Gateway & Asynchronous Webhooks
-Phase 07: Digital Ticket QR Engine & Notifications
-Phase 08: Theatre Partner & Super Admin Portals
-Phase 09: Customer Web Application
-Phase 10: Performance, Chaos & Load Testing
-Phase 11: Production Deployment & Observability
+Phase 03: Backend Foundation & Project Setup (COMPLETED)
+Phase 04: Authentication, Security & RBAC Implementation (PENDING APPROVAL)
+Phase 05: Master Catalogs, Theatres & Screen Visualizer
+Phase 06: High-Concurrency Booking Engine & Redis Locks
+Phase 07: Payment Gateway & Asynchronous Webhooks
+Phase 08: Digital Ticket QR Engine & Notifications
+Phase 09: Theatre Partner & Super Admin Portals
+Phase 10: Customer Web Application
+Phase 11: Performance, Chaos & Load Testing
+Phase 12: Production Deployment & Observability
 ```
 
 ---
 
-## 7. Architecture Status & Quality Gates
+## 8. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-booking under race conditions via Redis Lua scripts + MongoDB ACID transactions.
 - **Tenancy Boundary**: Absolute isolation by `partner_id` / `theatre_id`, enforced at the repository layer.
 - **Payment Compliance**: Zero PCI-DSS footprint; Razorpay webhook verification via HMAC-SHA256 constant-time comparison.
+- **Test Quality Gate**: 44 automated tests passing (100% pass rate) with > 88% statement coverage.
 
 ---
 
 > [!IMPORTANT]
-> **Part 1 & Part 2 Objectives Complete:** All architecture, database plans, schemas, business workflows, concurrency models, security controls, and indexing strategies are fully documented.
-> In accordance with project instructions, backend setup and coding will commence only after Part 2 approval.
+> **Part 1, Part 2 & Part 3 Complete:** Architecture, database designs, backend foundation code, test harnesses, and infrastructure are fully implemented and verified.
+> In accordance with project instructions, authentication and business logic implementation will commence only after Part 3 approval.
 

@@ -53,3 +53,4 @@ The backend is initialized inside `apps/backend/` with standard scripts:
 1. **ESLint 9 (Flat Config)**: Configured in `eslint.config.js` with ECMAScript `latest`, enforcing strict variable declarations (`prefer-const`, `no-var`), type-safe equality (`eqeqeq: always`), and unused variable warnings with ignored prefix pattern (`^_`).
 2. **Prettier Formatting**: Configured in `.prettierrc` with standard 2-space indentation, single quotes, and automated CI check script `npm run format:check`.
 3. **Git Hygiene**: Comprehensive `.gitignore` preventing accidental commits of `.env` files, node_modules, log files, or coverage artifacts.
+

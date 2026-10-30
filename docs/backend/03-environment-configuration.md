@@ -66,3 +66,4 @@ CRITICAL: Environment configuration validation failed:
 Process exiting with code 1.
 ```
 This protects production deployments from launching in a broken or compromised state.
+
