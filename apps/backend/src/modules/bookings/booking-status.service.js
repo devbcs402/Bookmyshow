@@ -114,4 +114,3 @@ export class BookingStatusService {
 }
 
 export default BookingStatusService;
-

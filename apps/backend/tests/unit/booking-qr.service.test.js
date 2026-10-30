@@ -46,4 +46,3 @@ describe('BookingQrService Unit Tests', () => {
     expect(() => BookingQrService.verifyQrPayload(null)).toThrow(AppError);
   });
 });
-

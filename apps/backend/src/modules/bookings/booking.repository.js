@@ -209,6 +209,34 @@ export class BookingRepository {
   }
 
   /**
+   * Atomically confirms a booking with payment details and status history.
+   * @param {string} bookingId
+   * @param {Object} paymentDetails
+   * @param {Object} statusHistoryEntry
+   * @param {import('mongoose').ClientSession|null} [session=null]
+   * @returns {Promise<Object|null>}
+   */
+  async confirmBooking(bookingId, paymentDetails, statusHistoryEntry, session = null) {
+    const options = { new: true };
+    if (session) {
+      options.session = session;
+    }
+
+    return BookingModel.findByIdAndUpdate(
+      bookingId,
+      {
+        $set: {
+          status: BookingStatus.CONFIRMED,
+          paymentDetails,
+          'seats.$[].status': 'CONFIRMED'
+        },
+        $push: { statusHistory: statusHistoryEntry }
+      },
+      options
+    );
+  }
+
+  /**
    * Atomically cancels a booking with cancellation metadata.
    * @param {string} bookingId
    * @param {Object} cancellationDetails

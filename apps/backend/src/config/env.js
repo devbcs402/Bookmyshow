@@ -31,7 +31,13 @@ const envSchema = z.object({
   BOOKING_PAYMENT_WINDOW_SECONDS: z.coerce.number().int().min(60).max(900).default(300),
   DEFAULT_CONVENIENCE_FEE: z.coerce.number().min(0).default(30.0),
   DEFAULT_TAX_PERCENT: z.coerce.number().min(0).default(18.0),
-  BOOKING_CANCELLATION_CUTOFF_HOURS: z.coerce.number().min(0).default(2)
+  BOOKING_CANCELLATION_CUTOFF_HOURS: z.coerce.number().min(0).default(2),
+
+  RAZORPAY_KEY_ID: z.string().default('rzp_test_mockKeyId12345678'),
+  RAZORPAY_KEY_SECRET: z.string().default('rzp_test_mockSecret12345678'),
+  RAZORPAY_WEBHOOK_SECRET: z.string().default('rzp_webhook_secret_mock_123456'),
+  RAZORPAY_CURRENCY: z.string().default('INR'),
+  PAYMENT_ORDER_EXPIRY_MINUTES: z.coerce.number().int().min(1).max(120).default(15)
 });
 
 const parseConfig = () => {

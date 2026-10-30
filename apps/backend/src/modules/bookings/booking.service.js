@@ -570,6 +570,91 @@ export class BookingService {
     );
     return updatedBooking;
   }
+
+  /**
+   * Confirms a booking upon cryptographically verified payment.
+   *
+   * @param {string} bookingId
+   * @param {Object} paymentData
+   * @param {string|null} [actorId=null]
+   * @param {import('mongoose').ClientSession|null} [session=null]
+   * @returns {Promise<Object>} Confirmed booking record
+   */
+  async confirmBooking(bookingId, paymentData, actorId = null, session = null) {
+    const booking = await bookingRepository.findById(bookingId, session);
+    if (!booking) {
+      throw new AppError('Booking not found', HttpStatus.NOT_FOUND, ErrorCodes.BOOKING_NOT_FOUND);
+    }
+
+    if (booking.status === BookingStatus.CONFIRMED) {
+      logger.info(
+        { bookingId, reference: booking.bookingReference },
+        'Booking is already confirmed; returning idempotent record'
+      );
+      return booking;
+    }
+
+    // Validate Transition to CONFIRMED
+    BookingStatusService.validateTransition(booking.status, BookingStatus.CONFIRMED, {
+      isVerifiedPayment: true,
+      role: 'SYSTEM'
+    });
+
+    const statusHistoryEntry = BookingStatusService.createStatusHistoryEntry(
+      BookingStatus.CONFIRMED,
+      actorId,
+      'Payment verified and captured; booking confirmed'
+    );
+
+    const paymentDetails = {
+      paymentId: paymentData.paymentId,
+      gateway: paymentData.gateway || 'RAZORPAY',
+      razorpayPaymentId: paymentData.razorpayPaymentId || null,
+      razorpayOrderId: paymentData.razorpayOrderId || null,
+      paidAmount: paymentData.amount || booking.netPayableAmount,
+      paidAt: paymentData.capturedAt || new Date()
+    };
+
+    const confirmedBooking = await bookingRepository.confirmBooking(
+      bookingId,
+      paymentDetails,
+      statusHistoryEntry,
+      session
+    );
+
+    // Remove from Redis expiration sorted set
+    await BookingExpirationService.removeExpirationIndex(bookingId);
+
+    // Release ephemeral Redis locks since seats are now durably confirmed in MongoDB
+    if (Array.isArray(booking.seats) && booking.seats.length > 0) {
+      const seatIds = booking.seats.map(s => (s.seatId ? s.seatId.toString() : s.seatId));
+      try {
+        await redisLockService.releaseLocks(
+          booking.showId.toString(),
+          seatIds,
+          booking.bookingReference,
+          booking.customerId.toString()
+        );
+      } catch (_e) {
+        // Ignored
+      }
+
+      try {
+        seatLockSocket.emitAvailabilityUpdated(booking.showId.toString(), {
+          reason: 'BOOKING_CONFIRMED'
+        });
+      } catch (_e) {
+        // Ignored
+      }
+    }
+
+    logger.info(
+      { bookingId, reference: booking.bookingReference },
+      'Booking confirmed successfully upon verified payment'
+    );
+
+    return confirmedBooking;
+  }
 }
 
 export const bookingService = new BookingService();

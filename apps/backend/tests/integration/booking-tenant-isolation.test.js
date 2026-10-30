@@ -134,4 +134,3 @@ describe('Booking Multi-Tenant Isolation & BOLA Tests', () => {
     expect(res.body.data.bookingReference).toBe('BK-CINEMA-A');
   });
 });
-

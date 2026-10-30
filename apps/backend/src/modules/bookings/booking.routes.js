@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import BookingController from './booking.controller.js';
+import paymentController from '../payments/payment.controller.js';
 import {
   authenticate,
   authorizeRoles,
@@ -13,6 +14,7 @@ import {
   customerBookingsQueryValidation,
   partnerBookingsQueryValidation
 } from './booking.validation.js';
+import { getBookingPaymentsSchema } from '../payments/payment.validation.js';
 import { Roles, Permissions } from '../auth/auth.constants.js';
 
 /* =========================================================================
@@ -123,6 +125,34 @@ bookingRoutes.get(
   '/:bookingId',
   validate(bookingIdParamValidation),
   BookingController.getBookingById
+);
+
+/**
+ * @openapi
+ * /bookings/{bookingId}/payments:
+ *   get:
+ *     tags:
+ *       - Bookings
+ *       - Payments
+ *     summary: Get payment history for a booking
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookingId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Payments history retrieved
+ *       404:
+ *         description: Booking not found
+ */
+bookingRoutes.get(
+  '/:bookingId/payments',
+  validate(getBookingPaymentsSchema),
+  paymentController.getBookingPayments
 );
 
 /**

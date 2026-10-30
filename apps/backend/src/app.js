@@ -33,8 +33,15 @@ export const createApp = () => {
   // 3. Cross-Origin Resource Sharing (CORS)
   app.use(cors(corsOptions));
 
-  // 4. JSON Body Parser (Bounded at 10MB to prevent memory exhaustion)
-  app.use(express.json({ limit: '10mb' }));
+  // 4. JSON Body Parser (Bounded at 10MB to prevent memory exhaustion, with rawBody preservation for webhooks)
+  app.use(
+    express.json({
+      limit: '10mb',
+      verify: (req, _res, buf) => {
+        req.rawBody = buf.toString('utf8');
+      }
+    })
+  );
 
   // 5. URL-Encoded Body Parser
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));

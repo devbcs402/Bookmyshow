@@ -113,4 +113,3 @@ export class BookingController {
 }
 
 export default BookingController;
-

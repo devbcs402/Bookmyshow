@@ -247,6 +247,14 @@ const bookingSchema = new mongoose.Schema(
       type: cancellationDetailsSchema,
       default: null
     },
+    paymentDetails: {
+      paymentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment', default: null },
+      gateway: { type: String, default: 'RAZORPAY' },
+      razorpayPaymentId: { type: String, default: null },
+      razorpayOrderId: { type: String, default: null },
+      paidAmount: { type: Number, default: 0 },
+      paidAt: { type: Date, default: null }
+    },
     statusHistory: {
       type: [statusHistorySchema],
       default: []

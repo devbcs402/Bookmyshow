@@ -441,7 +441,44 @@ The complete specifications, status state machine, server-side pricing engine, i
 
 ---
 
-## 14. Development Phases Overview
+## 14. Master Payment Gateway Documentation Index (Part 11 Deliverables)
+
+The complete architectural specifications, Razorpay integration, cryptographic HMAC verification, webhook ingestion, atomic booking confirmation, failure handling, refund management, and concurrency reports are organized in `docs/payments/`:
+
+1. [01. Payment Gateway Architecture & Overview](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/01-payment-architecture.md)
+   - Enterprise payment architecture, zero-trust server model, and modular topology.
+2. [02. Razorpay Gateway Configuration & Environment Setup](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/02-razorpay-configuration.md)
+   - Credentials, Zod environment validation, raw body buffering preservation in Express, and SDK singleton.
+3. [03. Payment & Refund Lifecycle State Machines](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/03-payment-lifecycle.md)
+   - Deterministic FSM state transitions (`CREATED` -> `PENDING` -> `CAPTURED` -> `REFUNDED` / `FAILED`) and audit logs.
+4. [04. Create Payment Order Workflow](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/04-create-order-workflow.md)
+   - Step-by-step sequence diagram, integer paise conversion, BOLA checks, and idempotent order reuse.
+5. [05. Cryptographic Signature Verification & Security](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/05-signature-verification.md)
+   - Constant-time HMAC-SHA256 signature verification via `crypto.timingSafeEqual` preventing forgery and timing attacks.
+6. [06. Asynchronous Webhook Integration & Resiliency](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/06-webhook-integration.md)
+   - Ingesting `payment.captured`, `payment.failed`, `order.paid`, `refund.processed`, and 90-day TTL deduplication ledger.
+7. [07. Booking Confirmation & Inventory Synchronization](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/07-booking-confirmation-integration.md)
+   - Multi-document MongoDB ACID transactions, Redis ephemeral lock release, and Socket.IO real-time emission.
+8. [08. Payment Failure Handling & Error Diagnostics](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/08-payment-failure-handling.md)
+   - Classification of failures, customer-recoverable retry vs terminal errors, and late-capture auto-refund guards.
+9. [09. Refund Management & Settlement Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/09-refund-management.md)
+   - Role-based refund authorization, anti-drain unrefunded balance verification, and instant settlement.
+10. [10. Payment Reconciliation & Anomaly Detection](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/10-payment-reconciliation.md)
+    - Detecting orphan pending orders, repairing status drifts, and flagging payments for automated refund.
+11. [11. Payment Security, PCI-DSS & BOLA Defense](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/11-payment-security.md)
+    - Zero PCI-DSS footprint, no cardholder data storage, and strict tenant isolation on payment records.
+12. [12. Payment Concurrency, Race Conditions & Idempotency](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/12-concurrency-and-idempotency.md)
+    - Detailed defense against duplicate webhooks, simultaneous verify/webhook races, and expiration races.
+13. [13. Payment Gateway REST API Specification](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/13-payment-api-documentation.md)
+    - Complete REST API documentation for orders, signature verification, webhooks, payment history, and refunds.
+14. [14. Payment Gateway Testing & Quality Assurance Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/14-payment-testing-report.md)
+    - 54 automated tests across 6 suites (unit, integration, concurrency, BOLA) with 100% pass rate.
+15. [15. Payment Gateway Module Architectural Review](file:///d:/YASH%20KACHA/Bookmyshow/docs/payments/15-payment-module-review.md)
+    - Architectural sign-off, checklist verification, and readiness audit for Part 12.
+
+---
+
+## 15. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
@@ -454,8 +491,8 @@ Phase 07: Screen & Seat Layout Management Module (COMPLETED)
 Phase 08: Show Scheduling Engine & Dynamic Pricing (COMPLETED)
 Phase 09: Seat Availability & Temporary Seat Locking System (COMPLETED)
 Phase 10: Booking Engine Module (Production-Grade) (COMPLETED)
-Phase 11: Payment Processing & Gateway Integration (Razorpay) (PENDING APPROVAL)
-Phase 12: Digital Ticket Delivery, PDF Invoicing & Notifications
+Phase 11: Payment Processing & Gateway Integration (Razorpay) (COMPLETED)
+Phase 12: Digital Ticket Delivery, PDF Invoicing & Notifications (PENDING APPROVAL)
 Phase 13: Customer & Theatre Partner Frontend Applications
 Phase 14: Performance, Chaos & Load Testing
 Phase 15: Production Deployment & Observability
@@ -463,7 +500,7 @@ Phase 15: Production Deployment & Observability
 
 ---
 
-## 15. Architecture Status & Quality Gates
+## 16. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-locking and zero double-booking under race conditions via Redis Lua scripts, atomic MongoDB transactions, and compound unique partial indexes.
@@ -476,12 +513,12 @@ Phase 15: Production Deployment & Observability
 - **Show Scheduling Subsystem**: Temporal interval collision detection $[S_E < O_N \land O_E > S_N]$ with cleanup buffers, two-tier distributed screen concurrency locking, category-to-layout pricing invariance, UTC date normalization, and lifecycle status state machine.
 - **Seat Availability & Locking Subsystem**: Distributed atomic multi-seat locking via single-threaded Redis Lua scripts (`ACQUIRE_MULTI_SEAT_LOCKS_LUA`), safe compare-and-delete release (`RELEASE_MULTI_SEAT_LOCKS_LUA`), renewal ceiling limits, BOLA/IDOR protection with dual-identifier validation (`lockId` + `userId`), non-blocking SCAN iteration, and Socket.IO real-time broadcasts with Redis Pub/Sub adapter.
 - **Booking Engine Subsystem**: Dual-phase reservation transition, centralized status state machine (`BookingStatusService`), server-side dynamic pricing with epsilon rounding, client idempotency caching with SHA-256 fingerprinting, distributed expiration worker via Redis Sorted Sets (`bookings:expirations`), and tamper-proof HMAC-SHA256 gate QR admittance tokens.
-- **Payment Compliance**: Zero PCI-DSS footprint; Razorpay webhook verification via HMAC-SHA256 constant-time comparison (prepared for Part 11).
-- **Test Quality Gate**: **424 automated tests across 56 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Payment Processing & Gateway Integration**: Official Razorpay Node.js SDK integration with server-side paise order generation, constant-time HMAC-SHA256 signature verification (`crypto.timingSafeEqual`), untampered raw body webhook processing (`express.json` verify hook), multi-document MongoDB ACID confirmation transactions, Zero PCI-DSS SAQ A compliance, multi-tenant BOLA defense, and automated reconciliation for orphan orders and late captures.
+- **Test Quality Gate**: **478 automated tests across 62 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
 
 ---
 
 > [!IMPORTANT]
-> **Parts 1 through 10 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, show management & scheduling, seat availability & temporary seat locking, and the production-grade booking engine module are fully implemented, verified, and documented.
-> In strict accordance with the project instructions, **Part 11: Payment Processing & Gateway Integration (Razorpay)** will commence only after user review and approval.
+> **Parts 1 through 11 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, show management & scheduling, seat availability & temporary seat locking, production-grade booking engine, and Razorpay payment gateway integration are fully implemented, verified, and documented.
+> In strict accordance with the project instructions, **Part 12: Digital Ticket Delivery, PDF Invoicing & Notifications** will commence only after user review and approval.
 

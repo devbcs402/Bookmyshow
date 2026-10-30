@@ -582,6 +582,115 @@ const swaggerOptions = {
                 'https://api.bookmyshow.example.com/api/v1/bookings/verify/BK-20261030-XYZ789'
             }
           }
+        },
+        PaymentOrderCreateRequest: {
+          type: 'object',
+          required: ['bookingId'],
+          properties: {
+            bookingId: {
+              type: 'string',
+              example: '67220b3f81e7d23a104f9d01',
+              description: 'Valid 24-character hexadecimal MongoDB ObjectId of the pending booking'
+            }
+          }
+        },
+        PaymentOrderResponse: {
+          type: 'object',
+          properties: {
+            keyId: { type: 'string', example: 'rzp_test_mockKeyId12345678' },
+            orderId: { type: 'string', example: 'order_DBJOWzybf0sJbb' },
+            amount: { type: 'integer', example: 48540, description: 'Amount in paise' },
+            currency: { type: 'string', example: 'INR' },
+            bookingReference: { type: 'string', example: 'BK-20261030-XYZ789' },
+            bookingId: { type: 'string', example: '67220b3f81e7d23a104f9d01' },
+            paymentId: { type: 'string', example: '67220b3f81e7d23a104f9e01' }
+          }
+        },
+        PaymentVerifyRequest: {
+          type: 'object',
+          required: ['razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature'],
+          properties: {
+            razorpay_order_id: { type: 'string', example: 'order_DBJOWzybf0sJbb' },
+            razorpay_payment_id: { type: 'string', example: 'pay_29QQoUBi66xm2f' },
+            razorpay_signature: {
+              type: 'string',
+              example: '9ef426ebf606b111a62d53a330070e36e4bb9a0ef44979f8295b882ac377ac82'
+            },
+            bookingId: { type: 'string', example: '67220b3f81e7d23a104f9d01' }
+          }
+        },
+        Payment: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '67220b3f81e7d23a104f9e01' },
+            bookingId: { type: 'string', example: '67220b3f81e7d23a104f9d01' },
+            customerId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0u1' },
+            partnerId: { type: 'string', example: '67220b3f81e7d23a104f9901' },
+            gateway: { type: 'string', example: 'RAZORPAY' },
+            razorpayOrderId: { type: 'string', example: 'order_DBJOWzybf0sJbb' },
+            razorpayPaymentId: { type: 'string', example: 'pay_29QQoUBi66xm2f' },
+            amount: { type: 'number', example: 485.4 },
+            amountInPaise: { type: 'integer', example: 48540 },
+            currency: { type: 'string', example: 'INR' },
+            status: {
+              type: 'string',
+              enum: [
+                'CREATED',
+                'PENDING',
+                'AUTHORIZED',
+                'CAPTURED',
+                'FAILED',
+                'REFUND_PENDING',
+                'PARTIALLY_REFUNDED',
+                'REFUNDED'
+              ],
+              example: 'CAPTURED'
+            },
+            paymentMethod: { type: 'string', example: 'upi' },
+            verifiedAt: { type: 'string', format: 'date-time' },
+            capturedAt: { type: 'string', format: 'date-time' }
+          }
+        },
+        RefundRequest: {
+          type: 'object',
+          required: ['amount'],
+          properties: {
+            amount: {
+              type: 'number',
+              example: 485.4,
+              description: 'Gross refund amount in Rupees'
+            },
+            reason: {
+              type: 'string',
+              enum: [
+                'CUSTOMER_REQUESTED',
+                'SHOW_CANCELLED',
+                'DOUBLE_BOOKING_FAILSAFE',
+                'OVERPAYMENT',
+                'ADMIN_OVERRIDE'
+              ],
+              example: 'CUSTOMER_REQUESTED'
+            },
+            deductions: { type: 'number', example: 0 }
+          }
+        },
+        Refund: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '67220b3f81e7d23a104f9f01' },
+            bookingId: { type: 'string', example: '67220b3f81e7d23a104f9d01' },
+            paymentId: { type: 'string', example: '67220b3f81e7d23a104f9e01' },
+            razorpayRefundId: { type: 'string', example: 'rfnd_DCOWzybf0sJbb' },
+            refundAmount: { type: 'number', example: 485.4 },
+            status: {
+              type: 'string',
+              enum: ['PENDING', 'PROCESSING', 'SUCCESS', 'FAILED'],
+              example: 'SUCCESS'
+            },
+            reason: { type: 'string', example: 'CUSTOMER_REQUESTED' },
+            initiatedAt: { type: 'string', format: 'date-time' },
+            settledAt: { type: 'string', format: 'date-time' }
+          }
         }
       }
     }

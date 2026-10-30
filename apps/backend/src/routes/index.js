@@ -26,6 +26,7 @@ import {
 } from '../modules/shows/show.routes.js';
 import seatLockRoutes from '../modules/seat-locks/seat-lock.routes.js';
 import { bookingRoutes, bookingOwnerRoutes } from '../modules/bookings/booking.routes.js';
+import paymentRoutes from '../modules/payments/payment.routes.js';
 
 const router = Router();
 
@@ -67,7 +68,9 @@ router.use('/theatres', theatreShowsPublicRoutes);
 router.use('/bookings', bookingRoutes);
 router.use('/owner/bookings', bookingOwnerRoutes);
 
+// Payment Gateway routes (Part 11)
+router.use('/payments', paymentRoutes);
+
 // Subsequent domain modules will be mounted here:
-// router.use('/payments', paymentRoutes);
 
 export default router;

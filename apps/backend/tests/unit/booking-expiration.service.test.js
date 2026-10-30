@@ -78,4 +78,3 @@ describe('BookingExpirationService Unit Tests', () => {
     expect(updateSpy).not.toHaveBeenCalled();
   });
 });
-
