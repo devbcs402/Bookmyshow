@@ -43,4 +43,3 @@ genreSchema.index({ isActive: 1, deletedAt: 1 });
 
 export const Genre = mongoose.model('genres', genreSchema);
 export default Genre;
-

@@ -77,4 +77,3 @@ export default {
   CrewRole,
   MovieSortFields
 };
-

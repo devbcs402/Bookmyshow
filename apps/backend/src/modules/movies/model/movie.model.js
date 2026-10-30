@@ -259,4 +259,3 @@ movieSchema.index(
 
 export const Movie = mongoose.model('movies', movieSchema);
 export default Movie;
-

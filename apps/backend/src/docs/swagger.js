@@ -108,6 +108,65 @@ const swaggerOptions = {
             nativeName: { type: 'string', example: 'हिन्दी' },
             isActive: { type: 'boolean', example: true }
           }
+        },
+        City: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0c1' },
+            name: { type: 'string', example: 'Mumbai' },
+            slug: { type: 'string', example: 'mumbai' },
+            state: { type: 'string', example: 'Maharashtra' },
+            country: { type: 'string', example: 'India' },
+            isTopCity: { type: 'boolean', example: true },
+            coordinates: {
+              type: 'object',
+              properties: {
+                type: { type: 'string', example: 'Point' },
+                coordinates: {
+                  type: 'array',
+                  items: { type: 'number' },
+                  example: [72.8777, 19.076]
+                }
+              }
+            }
+          }
+        },
+        Theatre: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0a1' },
+            partnerId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0b1' },
+            name: { type: 'string', example: 'PVR ICON: Phoenix Palladium' },
+            slug: { type: 'string', example: 'pvr-icon-phoenix-palladium' },
+            theatreCode: { type: 'string', example: 'PVR-MUM-01' },
+            status: { type: 'string', example: 'APPROVED' },
+            contactEmail: { type: 'string', example: 'icon.palladium@pvr.com' },
+            contactPhone: { type: 'string', example: '+912224989100' },
+            address: {
+              type: 'object',
+              properties: {
+                street: { type: 'string', example: '462, Senapati Bapat Marg' },
+                area: { type: 'string', example: 'Lower Parel' },
+                cityId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0c1' },
+                cityName: { type: 'string', example: 'Mumbai' },
+                state: { type: 'string', example: 'Maharashtra' },
+                pincode: { type: 'string', example: '400013' }
+              }
+            },
+            location: {
+              type: 'object',
+              properties: {
+                type: { type: 'string', example: 'Point' },
+                coordinates: {
+                  type: 'array',
+                  items: { type: 'number' },
+                  example: [72.8258, 18.9953]
+                }
+              }
+            },
+            totalScreens: { type: 'number', example: 7 },
+            isActive: { type: 'boolean', example: true }
+          }
         }
       }
     }

@@ -43,4 +43,3 @@ languageSchema.index({ isActive: 1, deletedAt: 1 });
 
 export const Language = mongoose.model('languages', languageSchema);
 export default Language;
-

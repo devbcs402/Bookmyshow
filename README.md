@@ -276,7 +276,38 @@ The movie catalog, taxonomy, media handling, and administrative approval pipelin
 
 ---
 
-## 9. Development Phases Overview
+## 9. Master Theatre & Branch Management Documentation Index (Part 6 Deliverables)
+
+The multi-tenant cinema complex, branch management, geospatial search, and compliance approval pipelines are documented in `docs/theatres/`:
+
+1. [01. Theatre & Branch Module Overview](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/01-theatre-module-overview.md)
+   - Module scope, architecture, core entities, and layered service-repository design.
+2. [02. Theatre Database Design & Schemas](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/02-theatre-database-design.md)
+   - Mongoose schemas for `theatres` and `cities`, GeoJSON structures, compound indexes, and `2dsphere` spatial indexing.
+3. [03. Theatre Registration & Compliance Lifecycle](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/03-theatre-registration-workflow.md)
+   - Onboarding sequence, validation invariants, status state machine, and audit trail protocols.
+4. [04. Theatre Owner Permissions & Delegation Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/04-theatre-owner-permissions.md)
+   - RBAC matrix, operational boundaries, and staff/manager assignment workflows.
+5. [05. Multi-Tenant Data Isolation & BOLA/IDOR Security](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/05-multi-tenant-isolation.md)
+   - Boundary isolation, server-side context derivation, query scoping, and anti-enumeration defenses.
+6. [06. Cinema Branch Management Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/06-branch-management.md)
+   - Physical branch modeling, parent multiplex relationships, and dedicated branch endpoints.
+7. [07. Super Admin Theatre Review & Governance Workflow](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/07-theatre-admin-workflow.md)
+   - Administrative review, approvals, rejections, suspensions, and anti-self approval guards.
+8. [08. Location-Based Search & Geospatial Discovery](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/08-theatre-location-search.md)
+   - GeoJSON coordinate bounds, `2dsphere` spherical indexing, proximity queries (`$near`), and municipal filtering.
+9. [09. Theatre & Branch Module API Documentation](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/09-theatre-api-documentation.md)
+   - Complete REST API specifications for all 28 Owner, Branch, Admin, Public, and City endpoints.
+10. [10. Theatre & Branch Module Testing & Quality Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/10-theatre-testing-report.md)
+    - Full test report covering unit tests, integration tests, multi-tenant BOLA tests, and edge case coverage.
+11. [11. Theatre Module Security Review & Threat Assessment](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/11-theatre-security-review.md)
+    - OWASP API 2023 evaluation, privilege escalation defense, and immutable audit logging.
+12. [12. Theatre Module Final Review & Sign-Off Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/theatres/12-theatre-module-review-report.md)
+    - Final audit sign-off, transition readiness for Part 7, and completion summary.
+
+---
+
+## 10. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
@@ -284,32 +315,35 @@ Phase 02: Database Schemas, Validation & Seeding (COMPLETED)
 Phase 03: Backend Foundation & Project Setup (COMPLETED)
 Phase 04: Authentication, Security & RBAC Implementation (COMPLETED)
 Phase 05: Movie Management Module & Taxonomies (COMPLETED)
-Phase 06: Theatre Management, Screens & Seating Layouts (PENDING APPROVAL)
-Phase 07: High-Concurrency Booking Engine & Redis Locks
-Phase 08: Payment Gateway & Asynchronous Webhooks
-Phase 09: Digital Ticket QR Engine & Notifications
-Phase 10: Theatre Partner & Super Admin Portals
-Phase 11: Customer Web Application
-Phase 12: Performance, Chaos & Load Testing
-Phase 13: Production Deployment & Observability
+Phase 06: Theatre & Branch Management Module (COMPLETED)
+Phase 07: Screen & Auditorium Management Module (PENDING APPROVAL)
+Phase 08: Seating Layout Visualizer & Seat Categories
+Phase 09: Show Scheduling Engine & Collision Prevention
+Phase 10: High-Concurrency Booking Engine & Redis Lua Locks
+Phase 11: Payment Gateway & Asynchronous Webhooks
+Phase 12: Digital Ticket QR Engine & Notifications
+Phase 13: Customer & Theatre Partner Frontend Applications
+Phase 14: Performance, Chaos & Load Testing
+Phase 15: Production Deployment & Observability
 ```
 
 ---
 
-## 10. Architecture Status & Quality Gates
+## 11. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-booking under race conditions via Redis Lua scripts + MongoDB ACID transactions.
-- **Tenancy Boundary**: Absolute isolation by `partnerId` / `theatreId`, enforced at middleware (`requireTenantScope`) and repository layers.
+- **Tenancy Boundary**: Absolute isolation by `partnerId` / `theatreId`, enforced at middleware (`requireTenantScope`), service layer, and repository layers.
 - **Authentication & Tokens**: Dual-token JWT (15m in-memory access token, 7d rotating refresh token in `HttpOnly, Secure, SameSite=Strict` cookie) with Token Family reuse detection.
-- **Role-Based Access Control**: 5 platform roles, 23 fine-grained permissions, and immutable server-side role assignment.
+- **Role-Based Access Control**: 5 platform roles, 24 fine-grained permissions, and immutable server-side role assignment.
 - **Movie Catalog & Taxonomy**: Normalized `genres` and `languages`, denormalized `genreSlugs` indexing, 8-stage movie status lifecycle with dynamic theatrical state derivation, and Cloudinary media abstraction.
+- **Theatre & Branch Subsystem**: Multi-tenant cinema complexes, physical branch management, GeoJSON `2dsphere` proximity indexing (`$near`), BOLA/IDOR anti-enumeration defense, and staff delegation governance.
 - **Payment Compliance**: Zero PCI-DSS footprint; Razorpay webhook verification via HMAC-SHA256 constant-time comparison.
-- **Test Quality Gate**: **160 automated tests across 22 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Test Quality Gate**: **201 automated tests across 27 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
 
 ---
 
 > [!IMPORTANT]
-> **Part 1, Part 2, Part 3, Part 4 & Part 5 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, and the movie management module are fully implemented, verified, and documented.
-> In strict accordance with the project instructions, **Part 6: Theatre Management Module** will commence only after user review and approval.
+> **Part 1, Part 2, Part 3, Part 4, Part 5 & Part 6 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, and theatre & branch management are fully implemented, verified, and documented.
+> In strict accordance with the project instructions, **Part 7: Screen & Auditorium Management Module** will commence only after user review and approval.
 
