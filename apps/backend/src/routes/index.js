@@ -34,6 +34,9 @@ import {
   searchSuggestionRoutes,
   locationDiscoveryRoutes
 } from '../modules/discovery/routes/discovery.routes.js';
+import auditLogRoutes from '../modules/audit-logs/audit-log.routes.js';
+import adminAnalyticsRoutes from '../modules/analytics/admin-analytics.routes.js';
+import theatreOwnerAnalyticsRoutes from '../modules/analytics/theatre-owner-analytics.routes.js';
 
 const router = Router();
 
@@ -86,6 +89,14 @@ router.use('/admin/notifications', adminNotificationRoutes);
 router.use('/recommendations', recommendationRoutes);
 router.use('/search', searchSuggestionRoutes);
 router.use('/discovery/location', locationDiscoveryRoutes);
+
+// Administrative Audit Logs (Part 14)
+router.use('/admin/audit-logs', auditLogRoutes);
+
+// Platform & Partner Analytics (Part 14)
+router.use('/admin/analytics', adminAnalyticsRoutes);
+router.use('/theatre-owner/analytics', theatreOwnerAnalyticsRoutes);
+router.use('/owner/analytics', theatreOwnerAnalyticsRoutes);
 
 // Subsequent domain modules will be mounted here:
 

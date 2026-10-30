@@ -52,8 +52,12 @@ const auditLogSchema = new mongoose.Schema(
 // Append-only policy: Prevent updates or deletions on audit logs
 auditLogSchema.pre(
   ['updateOne', 'updateMany', 'findOneAndUpdate', 'deleteOne', 'deleteMany', 'findOneAndDelete'],
-  function () {
-    throw new Error('IMMUTABLE_AUDIT_LOG: Audit log records cannot be updated or deleted');
+  function (next) {
+    const err = new Error('IMMUTABLE_AUDIT_LOG: Audit log records cannot be updated or deleted');
+    if (typeof next === 'function') {
+      return next(err);
+    }
+    throw err;
   }
 );
 

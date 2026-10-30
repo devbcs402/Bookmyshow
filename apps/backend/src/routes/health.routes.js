@@ -49,4 +49,20 @@ router.get('/live', HealthController.getLiveness);
  */
 router.get('/ready', HealthController.getReadiness);
 
+/**
+ * @openapi
+ * /health/metrics:
+ *   get:
+ *     summary: Process operational metrics
+ *     description: Returns runtime process metrics (memory RSS/heap, CPU usage, uptime). In production, requires X-Metrics-Token header.
+ *     tags:
+ *       - Infrastructure
+ *     responses:
+ *       200:
+ *         description: Operational telemetry metrics
+ *       401:
+ *         description: Unauthorized token
+ */
+router.get('/metrics', HealthController.getMetrics);
+
 export default router;

@@ -4,11 +4,12 @@ import { z } from 'zod';
 // Load .env file
 dotenv.config();
 
-const envSchema = z.object({
+export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().int().positive().default(5000),
   API_PREFIX: z.string().startsWith('/').default('/api/v1'),
   CLIENT_URL: z.string().url().default('http://localhost:3000'),
+  ALLOWED_ORIGINS: z.string().default(''),
 
   MONGODB_URI: z.string().min(1, 'MONGODB_URI is mandatory'),
   REDIS_URL: z.string().min(1, 'REDIS_URL is mandatory'),
@@ -23,6 +24,57 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
 
   LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
+
+  // Security & Proxy Settings
+  TRUST_PROXY: z
+    .preprocess(val => {
+      if (val === 'true' || val === true || val === '1') {
+        return 1;
+      }
+      if (val === 'false' || val === false || val === '0') {
+        return 0;
+      }
+      if (val !== undefined && !isNaN(Number(val))) {
+        return Number(val);
+      }
+      return 0;
+    }, z.number())
+    .default(0),
+
+  COOKIE_SECURE: z
+    .preprocess(val => {
+      if (val === 'true' || val === true) {
+        return true;
+      }
+      if (val === 'false' || val === false) {
+        return false;
+      }
+      return false;
+    }, z.boolean())
+    .default(false),
+
+  COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax'),
+  COOKIE_DOMAIN: z.string().default(''),
+
+  ENABLE_SWAGGER: z
+    .preprocess(val => {
+      if (val === 'false' || val === false) {
+        return false;
+      }
+      return true;
+    }, z.boolean())
+    .default(true),
+
+  METRICS_ENABLED: z
+    .preprocess(val => {
+      if (val === 'false' || val === false) {
+        return false;
+      }
+      return true;
+    }, z.boolean())
+    .default(true),
+
+  INTERNAL_METRICS_TOKEN: z.string().default('bms_internal_metrics_secret_token_12345'),
 
   SEAT_LOCK_TTL_SECONDS: z.coerce.number().int().min(60).max(600).default(300),
   MAX_SEATS_PER_LOCK: z.coerce.number().int().min(1).max(10).default(10),
@@ -65,8 +117,8 @@ const envSchema = z.object({
   NOTIFICATION_RETRY_BACKOFF_SECONDS: z.coerce.number().int().min(1).max(3600).default(5)
 });
 
-const parseConfig = () => {
-  const result = envSchema.safeParse(process.env);
+export const parseConfig = (customEnv = process.env) => {
+  const result = envSchema.safeParse(customEnv);
 
   if (!result.success) {
     const errorDetails = result.error.errors
@@ -74,7 +126,7 @@ const parseConfig = () => {
       .join('\n');
     console.error('CRITICAL: Environment configuration validation failed:\n' + errorDetails);
     // In test environment, throw Error instead of exiting process so tests can assert failure
-    if (process.env.NODE_ENV === 'test') {
+    if (customEnv.NODE_ENV === 'test' || process.env.NODE_ENV === 'test') {
       throw new Error(`Environment validation failed: ${result.error.message}`);
     }
     process.exit(1);

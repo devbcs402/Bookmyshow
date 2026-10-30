@@ -2,6 +2,7 @@ import { Router } from 'express';
 import paymentController from './payment.controller.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { authenticate, authorize } from '../../middlewares/auth.middleware.js';
+import { paymentLimiter } from '../../middlewares/rate-limit.middleware.js';
 import { Roles } from '../auth/auth.constants.js';
 import {
   createOrderSchema,
@@ -43,6 +44,7 @@ const router = Router();
  */
 router.post(
   '/create-order',
+  paymentLimiter,
   authenticate,
   authorize(Roles.CUSTOMER, Roles.SUPER_ADMIN),
   validate(createOrderSchema),
@@ -84,6 +86,7 @@ router.post(
  */
 router.post(
   '/verify',
+  paymentLimiter,
   authenticate,
   authorize(Roles.CUSTOMER, Roles.SUPER_ADMIN),
   validate(verifyPaymentSchema),

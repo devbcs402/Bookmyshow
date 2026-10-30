@@ -560,7 +560,54 @@ The complete architectural specifications, query sanitization, ReDoS defense, ra
 
 ---
 
-## 17. Development Phases Overview
+## 17. Part 14 Production Hardening, Analytics, Audit Logs & CI/CD Documentation Index
+
+The complete production hardening, analytics, security review, performance optimization, and deployment strategy is documented in `docs/production/`:
+
+1. [01. Existing System Audit & Pre-Production Assessment](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/01-existing-system-audit.md)
+   - Baseline audit across Parts 1–13, technical debt analysis, security weaknesses, and improvement roadmap.
+2. [02. Production Configuration Management & Environment Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/02-production-configuration.md)
+   - Twelve-factor environment validation with Zod, proxy trust (`TRUST_PROXY`), secure cookies, and CORS whitelisting.
+3. [03. Centralized Production Logging, Tracing & Observability](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/03-logging-and-monitoring.md)
+   - Pino structured JSON logging, UUID correlation IDs (`req.id`), user context, and PII/credential redaction.
+4. [04. Application Monitoring, Health Probes & Operational Metrics](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/04-health-checks.md)
+   - Infrastructure endpoints `/health`, `/health/live`, `/health/ready`, and protected `/health/metrics`.
+5. [05. Global Error Handling, Exception Sanitization & API Reliability](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/05-error-handling.md)
+   - Uniform error envelopes, zero production stack traces, and automatic MongoDB error interception.
+6. [06. Backend Security Audit & Vulnerability Review](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/06-security-audit.md)
+   - Comprehensive threat vector review: BOLA/IDOR defense, token rotation, signature validation, and least privilege.
+7. [07. Distributed Rate Limiting & Abuse Prevention](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/07-rate-limiting.md)
+   - Redis-backed rate limiting with atomic Lua scripts for auth, OTP, seat locks, bookings, payments, and search.
+8. [08. Administrative Audit Logging Subsystem](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/08-audit-logging.md)
+   - Append-only immutable audit trail with `IMMUTABLE_AUDIT_LOG` pre-hooks and `/api/v1/admin/audit-logs` query APIs.
+9. [09. Real Platform Analytics, Financial Accounting & Tenant Reporting](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/09-analytics.md)
+   - Real MongoDB aggregations distinguishing Gross Booking Value, Captured Payments, Refunds, Platform Commissions, and Settlements.
+10. [10. Database Performance Optimization & Compound Indexing](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/10-database-performance.md)
+    - 13 compound indexes, explain plan analysis, lean projections, and connection pool sizing.
+11. [11. Redis Performance, Concurrency Reliability & Cache Hygiene](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/11-redis-reliability.md)
+    - AOF persistence, volatile-lru eviction, non-blocking SCAN, reconnection retry, and atomic seat lock scripts.
+12. [12. Background Worker Architecture & Queue Reliability](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/12-queue-operations.md)
+    - Idempotent workers, exponential backoff retries, dead-letter quarantine, and graceful SIGTERM shutdown.
+13. [13. OpenAPI / Swagger 3.0 Documentation Synchronization](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/13-api-documentation.md)
+    - Dynamic OpenAPI 3.0 spec with schema coverage for audit logs, analytics, and health probes.
+14. [14. Production Docker Architecture & Deployment Runbook](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/14-docker-deployment.md)
+    - Multi-stage Dockerfile (`node:20-alpine`), non-root `nodejs` execution, compose orchestration, and topology guides.
+15. [15. GitHub Actions CI/CD Pipeline & Continuous Security](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/15-github-actions-cicd.md)
+    - Workflows for test/coverage verification (`ci.yml`), vulnerability/secret scanning (`security.yml`), and container build (`docker-build.yml`).
+16. [16. Automated Testing Strategy & Reliability Matrix](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/16-testing-strategy.md)
+    - Testing pyramid, security test coverage, concurrency race condition tests, and reliability metrics.
+17. [17. Repeatable Load Testing & Concurrency Benchmarking](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/17-load-testing.md)
+    - Repeatable Artillery test profiles for search catalog, seat locking rush, and end-to-end booking checkout.
+18. [18. Backup, Disaster Recovery & Financial Data Reconciliation](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/18-backup-disaster-recovery.md)
+    - MongoDB Atlas PITR, RPO < 5m, RTO < 30m, and post-recovery payment gateway reconciliation procedures.
+19. [19. Final Production Readiness Checklist](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/19-production-readiness-checklist.md)
+    - Itemized verification table with concrete evidence and official production sign-off.
+20. [20. Final Backend Review & Engineering Sign-Off Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/production/20-final-backend-review.md)
+    - Summary of all files created/modified, security enhancements, and readiness for React frontend integration.
+
+---
+
+## 18. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
@@ -576,14 +623,15 @@ Phase 10: Booking Engine Module (Production-Grade) (COMPLETED)
 Phase 11: Payment Processing & Gateway Integration (Razorpay) (COMPLETED)
 Phase 12: Notification System & Omnichannel Alerts (COMPLETED)
 Phase 13: Search, Filtering, Discovery & Recommendation Engine (COMPLETED)
-Phase 14: Production Hardening, Analytics, Audit Logs, Security Review, Performance Optimization, Deployment and CI/CD (PENDING APPROVAL)
-Phase 15: Customer & Theatre Partner Frontend Applications
-Phase 16: Performance, Chaos & Load Testing
+Phase 14: Production Hardening, Analytics, Audit Logs, Security Review, Performance Optimization, Deployment and CI/CD (COMPLETED)
+Phase 15: Customer Frontend Application (React) (NEXT PHASE)
+Phase 16: Theatre Partner Dashboard (React)
+Phase 17: Super Admin Dashboard (React)
 ```
 
 ---
 
-## 18. Architecture Status & Quality Gates
+## 19. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-locking and zero double-booking under race conditions via Redis Lua scripts, atomic MongoDB transactions, and compound unique partial indexes.
@@ -599,11 +647,12 @@ Phase 16: Performance, Chaos & Load Testing
 - **Payment Processing & Gateway Integration**: Official Razorpay Node.js SDK integration with server-side paise order generation, constant-time HMAC-SHA256 signature verification (`crypto.timingSafeEqual`), untampered raw body webhook processing (`express.json` verify hook), multi-document MongoDB ACID confirmation transactions, Zero PCI-DSS SAQ A compliance, multi-tenant BOLA defense, and automated reconciliation for orphan orders and late captures.
 - **Notification System & Omnichannel Alerts**: Centralized decoupled notification architecture across Email (SMTP/Resend/Mock), SMS (Fast2SMS/Twilio/Mock with Indian DLT compliance), WhatsApp (Meta Business Platform Cloud API), and In-App delivery. Dual-mode Redis and in-memory background queues, exponential backoff retries ($5 \times 2^{n-1}$), dead-letter queues, HTML sanitization, multi-lingual localization (en, hi, gu), private Socket.IO user rooms (`user:<userId>`), and strict BOLA defense.
 - **Search, Discovery & Recommendation Engine**: Centralized discovery system with safe regex escaping, ReDoS defense, multi-criteria filtering, verified show availability for now-showing movies, 48-hour booking velocity trending, 30-day sustained popularity, weighted Jaccard similar movies, geospatial `2dsphere` theatre radius searches, explainable rule-based recommendations with natural-language reasons, low-latency autocomplete suggestions, in-place recently viewed history management, and multi-tier Redis caching with automated invalidation.
-- **Test Quality Gate**: **593 automated tests across 77 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Production Hardening & Operations (Part 14)**: Distributed Redis rate limiting (`RedisRateLimitStore`), immutable append-only audit logging (`/api/v1/admin/audit-logs`), real MongoDB analytics reporting distinguishing Gross Booking Value, Captured Payments, Refunds, and Settlements (`/api/v1/admin/analytics/*` and `/api/v1/theatre-owner/analytics/*`), Kubernetes liveness/readiness/metrics probes (`/api/v1/health/*`), multi-stage Docker Alpine container, and GitHub Actions CI/CD workflows.
+- **Test Quality Gate**: **624+ automated tests across 80 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
 
 ---
 
 > [!IMPORTANT]
-> **Parts 1 through 13 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, show management & scheduling, seat availability & temporary seat locking, production-grade booking engine, Razorpay payment gateway integration, centralized omnichannel notification system, and the search, discovery & recommendation engine are fully implemented, verified, and documented.
-> In strict accordance with the project instructions, **Part 14: Production Hardening, Analytics, Audit Logs, Security Review, Performance Optimization, Deployment and CI/CD** will commence only after user review and approval.
+> **Parts 1 through 14 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, show scheduling, seat locking, booking engine, Razorpay payments, notifications, search & discovery, production hardening, analytics, audit logs, Docker containerization, and CI/CD pipelines are fully implemented, verified, and documented.
+> In strict accordance with the project instructions, **Part 15: Customer Frontend (React)** will commence only after user review and approval.
 

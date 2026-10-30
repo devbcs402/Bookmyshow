@@ -19,6 +19,11 @@ import apiRoutes from './routes/index.js';
 export const createApp = () => {
   const app = express();
 
+  // 0. Trust Proxy configuration for accurate client IP detection behind ALBs / Cloudflare
+  if (config.TRUST_PROXY) {
+    app.set('trust proxy', config.TRUST_PROXY);
+  }
+
   // 1. Request ID & Timing Interceptor
   app.use(requestIdMiddleware);
 
@@ -49,14 +54,15 @@ export const createApp = () => {
   // 6. Cookie Parser for secure HttpOnly cookie management
   app.use(cookieParser());
 
-  // 6. Request Logging & Duration Telemetry
+  // 7. Request Logging & Duration Telemetry with User ID and Client IP
   app.use((req, res, next) => {
     logger.debug({
       msg: 'Incoming Request',
       requestId: req.id,
       method: req.method,
       url: req.originalUrl,
-      ip: req.ip
+      ip: req.ip,
+      userId: req.user?._id || req.user?.id || undefined
     });
 
     res.on('finish', () => {
@@ -67,7 +73,9 @@ export const createApp = () => {
         method: req.method,
         url: req.originalUrl,
         statusCode: res.statusCode,
-        durationMs
+        durationMs,
+        ip: req.ip,
+        userId: req.user?._id || req.user?.id || undefined
       };
 
       if (res.statusCode >= 500) {
@@ -82,26 +90,28 @@ export const createApp = () => {
     next();
   });
 
-  // 7. Interactive OpenAPI / Swagger Documentation
-  app.use(
-    `${config.API_PREFIX}/docs`,
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec, {
-      customSiteTitle: 'BookMyShow Clone API Docs',
-      customCss: '.swagger-ui .topbar { display: none }'
-    })
-  );
+  // 8. Interactive OpenAPI / Swagger Documentation
+  if (config.ENABLE_SWAGGER) {
+    app.use(
+      `${config.API_PREFIX}/docs`,
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerSpec, {
+        customSiteTitle: 'BookMyShow Clone API Docs',
+        customCss: '.swagger-ui .topbar { display: none }'
+      })
+    );
+  }
 
-  // 8. Global Rate Limiter
+  // 9. Global Rate Limiter
   app.use(globalRateLimiter);
 
-  // 9. Mount Versioned API Routes (/api/v1)
+  // 10. Mount Versioned API Routes (/api/v1)
   app.use(config.API_PREFIX, apiRoutes);
 
-  // 10. 404 Route Not Found Interceptor
+  // 11. 404 Route Not Found Interceptor
   app.use(notFoundHandler);
 
-  // 11. Centralized Global Error Handler
+  // 12. Centralized Global Error Handler
   app.use(errorHandler);
 
   return app;

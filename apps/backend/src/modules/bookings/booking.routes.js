@@ -7,6 +7,7 @@ import {
   authorizePermission
 } from '../../middlewares/auth.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
+import { bookingLimiter } from '../../middlewares/rate-limit.middleware.js';
 import {
   createBookingValidation,
   bookingIdParamValidation,
@@ -76,7 +77,12 @@ bookingRoutes.use(authenticate);
  *       409:
  *         description: Seat already booked, lock expired, or ownership mismatch
  */
-bookingRoutes.post('/', validate(createBookingValidation), BookingController.createBooking);
+bookingRoutes.post(
+  '/',
+  bookingLimiter,
+  validate(createBookingValidation),
+  BookingController.createBooking
+);
 
 /**
  * @openapi

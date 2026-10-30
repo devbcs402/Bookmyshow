@@ -2,7 +2,11 @@ import { Router } from 'express';
 import AuthController from './auth.controller.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { authenticate } from '../../middlewares/auth.middleware.js';
-import { authRateLimiter } from '../../middlewares/rate-limit.middleware.js';
+import {
+  authRateLimiter,
+  otpRateLimiter,
+  passwordResetLimiter
+} from '../../middlewares/rate-limit.middleware.js';
 import {
   registerValidation,
   theatreOwnerRegisterValidation,
@@ -39,24 +43,19 @@ router.post('/logout', authenticate, AuthController.logout);
 router.post('/logout-all', authenticate, AuthController.logoutAll);
 
 // One-Time Password (OTP)
-router.post('/otp/send', authRateLimiter, validate(sendOtpValidation), AuthController.sendOtp);
-router.post(
-  '/otp/verify',
-  authRateLimiter,
-  validate(verifyOtpValidation),
-  AuthController.verifyOtp
-);
+router.post('/otp/send', otpRateLimiter, validate(sendOtpValidation), AuthController.sendOtp);
+router.post('/otp/verify', otpRateLimiter, validate(verifyOtpValidation), AuthController.verifyOtp);
 
 // Password Recovery & Lifecycle
 router.post(
   '/password/forgot',
-  authRateLimiter,
+  passwordResetLimiter,
   validate(forgotPasswordValidation),
   AuthController.forgotPassword
 );
 router.post(
   '/password/reset',
-  authRateLimiter,
+  passwordResetLimiter,
   validate(resetPasswordValidation),
   AuthController.resetPassword
 );

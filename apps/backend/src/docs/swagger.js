@@ -809,6 +809,40 @@ const swaggerOptions = {
             posterUrl: { type: 'string', example: 'https://cdn.example.com/poster.jpg' },
             viewedAt: { type: 'string', format: 'date-time' }
           }
+        },
+        AuditLogEntry: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c099' },
+            actorId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0a1' },
+            actorRole: { type: 'string', example: 'SUPER_ADMIN' },
+            action: { type: 'string', example: 'THEATRE_APPROVED' },
+            targetResource: { type: 'string', example: 'theatres' },
+            targetId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0e1' },
+            ipAddress: { type: 'string', example: '127.0.0.1' },
+            details: { type: 'object' },
+            timestamp: { type: 'string', format: 'date-time' }
+          }
+        },
+        AnalyticsOverview: {
+          type: 'object',
+          properties: {
+            period: { type: 'object' },
+            platform: { type: 'object' },
+            bookings: { type: 'object' },
+            revenue: {
+              type: 'object',
+              properties: {
+                currency: { type: 'string', example: 'INR' },
+                grossBookingValue: { type: 'number', example: 450000 },
+                capturedPaymentValue: { type: 'number', example: 380000 },
+                refundValue: { type: 'number', example: 35000 },
+                platformCommission: { type: 'number', example: 38000 },
+                theatreSettlement: { type: 'number', example: 307000 },
+                netPlatformRevenue: { type: 'number', example: 38000 }
+              }
+            }
+          }
         }
       }
     }

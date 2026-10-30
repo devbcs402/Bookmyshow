@@ -2,6 +2,7 @@ import { Router } from 'express';
 import DiscoveryController from '../controllers/discovery.controller.js';
 import { optionalAuthenticate } from '../../../middlewares/auth.middleware.js';
 import { validate } from '../../../middlewares/validate.middleware.js';
+import { searchRateLimiter } from '../../../middlewares/rate-limit.middleware.js';
 import {
   recommendationsQueryValidation,
   searchSuggestionsQueryValidation,
@@ -19,6 +20,7 @@ recommendationRoutes.get(
 export const searchSuggestionRoutes = Router();
 searchSuggestionRoutes.get(
   '/suggestions',
+  searchRateLimiter,
   validate(searchSuggestionsQueryValidation, 'query'),
   DiscoveryController.getSearchSuggestions
 );
@@ -26,6 +28,7 @@ searchSuggestionRoutes.get(
 export const locationDiscoveryRoutes = Router();
 locationDiscoveryRoutes.get(
   '/',
+  searchRateLimiter,
   validate(locationDiscoveryQueryValidation, 'query'),
   DiscoveryController.getLocationDiscovery
 );

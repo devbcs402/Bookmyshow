@@ -1,0 +1,40 @@
+config:
+  target: 'http://localhost:5000/api/v1'
+  phases:
+    - duration: 60
+      arrivalRate: 15
+      name: 'End-to-End Booking Traffic Simulation'
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - name: 'Full Booking Lifecycle'
+    flow:
+      - get:
+          url: '/movies'
+      - get:
+          url: '/shows?movieId=65f1a2b3c4d5e6f7a8b9c0m1'
+      - get:
+          url: '/shows/65f1a2b3c4d5e6f7a8b9c0s1/seats'
+      - post:
+          url: '/shows/65f1a2b3c4d5e6f7a8b9c0s1/seat-locks'
+          json:
+            seatIds: ['65f1a2b3c4d5e6f7a8b9c011']
+          capture:
+            - json: '$.data.lockToken'
+              as: 'lockToken'
+      - post:
+          url: '/bookings'
+          json:
+            showId: '65f1a2b3c4d5e6f7a8b9c0s1'
+            seatIds: ['65f1a2b3c4d5e6f7a8b9c011']
+            lockToken: '{{ lockToken }}'
+          capture:
+            - json: '$.data._id'
+              as: 'bookingId'
+      - post:
+          url: '/payments/create-order'
+          json:
+            bookingId: '{{ bookingId }}'
+

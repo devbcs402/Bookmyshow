@@ -1,0 +1,36 @@
+name: Docker Container Build & Image Validation
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  docker-validation:
+    name: Build & Scan Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Backend Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/backend
+          file: ./apps/backend/Dockerfile
+          push: false
+          tags: bookmyshow/backend:ci-latest
+          load: true
+
+      - name: Scan Image for Vulnerabilities (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: bookmyshow/backend:ci-latest
+          format: 'table'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+

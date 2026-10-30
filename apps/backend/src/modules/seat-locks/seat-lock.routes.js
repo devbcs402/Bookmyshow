@@ -2,6 +2,7 @@ import { Router } from 'express';
 import SeatLockController from './seat-lock.controller.js';
 import { authenticate, optionalAuthenticate } from '../../middlewares/auth.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
+import { seatLockLimiter } from '../../middlewares/rate-limit.middleware.js';
 import {
   showIdParamValidation,
   acquireSeatLocksValidation,
@@ -126,6 +127,7 @@ seatLockRoutes.get(
  */
 seatLockRoutes.post(
   '/:showId/seat-locks',
+  seatLockLimiter,
   authenticate,
   validate(acquireSeatLocksValidation),
   SeatLockController.acquireSeatLocks
@@ -239,6 +241,7 @@ seatLockRoutes.delete(
  */
 seatLockRoutes.patch(
   '/:showId/seat-locks/renew',
+  seatLockLimiter,
   authenticate,
   validate(renewSeatLocksValidation),
   SeatLockController.renewSeatLocks
