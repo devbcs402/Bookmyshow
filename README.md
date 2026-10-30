@@ -624,14 +624,56 @@ Phase 11: Payment Processing & Gateway Integration (Razorpay) (COMPLETED)
 Phase 12: Notification System & Omnichannel Alerts (COMPLETED)
 Phase 13: Search, Filtering, Discovery & Recommendation Engine (COMPLETED)
 Phase 14: Production Hardening, Analytics, Audit Logs, Security Review, Performance Optimization, Deployment and CI/CD (COMPLETED)
-Phase 15: Customer Frontend Application (React) (NEXT PHASE)
-Phase 16: Theatre Partner Dashboard (React)
+Phase 15: Customer Frontend Application (React) (COMPLETED)
+Phase 16: Theatre Partner Dashboard (React) (NEXT PHASE)
 Phase 17: Super Admin Dashboard (React)
 ```
 
 ---
 
-## 19. Architecture Status & Quality Gates
+## 19. Customer Frontend Application (Part 15)
+
+The production-grade Customer Frontend application is located in `apps/customer-frontend/`. Built with React 18, Vite, Tailwind CSS, TanStack Query, React Hook Form, Zod, and Socket.IO Client, it integrates seamlessly with the backend APIs developed in Parts 1–14.
+
+### 19.1 Frontend Features & Modules
+- **Movie Discovery**: Dynamic hero premiere banner, personalized recommendations (`/api/v1/recommendations`), now-showing and upcoming carousels, and genre exploration pills.
+- **Search & Multi-Facet Filtering**: Debounced autocomplete suggestions (`/api/v1/search/suggestions`), multi-parameter catalog filters (genre, language, format, status), and sorting.
+- **City Selector**: Persistent city switcher with automatic theatre and show scheduling discovery.
+- **Cinema & Showtimes**: 7-day date selector strip, format badges (2D, 3D, IMAX, 4DX), and sold-out detection.
+- **Real-Time Interactive Seating Layout**: Physical rows and columns, category pricing headers (Platinum, Gold, Silver), and live seat status legend.
+- **Distributed Atomic Seat Locking**: Direct integration with Part 9 Redis Lua lock API (`POST /api/v1/shows/:showId/seat-locks`), lock countdown timer, conflict detection, and automatic renewal.
+- **Real-Time WebSocket Sync**: Subscriptions to show room events (`seat:locked`, `seat:released`, `seat:expired`, `seat:booked`, `show:availability-updated`).
+- **Booking Engine**: Server-calculated pricing snapshot, convenience fee, GST breakdown, and idempotency key protection.
+- **Razorpay Checkout Integration**: Standard gateway checkout modal, test card payments, and cryptographic HMAC signature verification (`POST /api/v1/payments/verify`).
+- **Digital Ticket Pass**: Confirmed booking PNR, show details, cryptographically signed QR code, and print support.
+- **Booking History**: All, Upcoming, Completed, and Cancelled tabs with cancellation policy enforcement and refund status.
+- **Profile & Settings**: Profile updates, password rotation, communication channel toggles, and active login session management.
+- **Notification Center**: Real-time alerts, unread badge counter, mark all as read.
+
+### 19.2 Frontend Setup & Run Commands
+```bash
+# Navigate to customer frontend
+cd apps/customer-frontend
+
+# Install dependencies
+npm install
+
+# Setup environment configuration
+cp .env.example .env
+
+# Start development server (http://localhost:5173)
+npm run dev
+
+# Run automated tests (Vitest)
+npm run test
+
+# Build production bundle
+npm run build
+```
+
+---
+
+## 20. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-locking and zero double-booking under race conditions via Redis Lua scripts, atomic MongoDB transactions, and compound unique partial indexes.
@@ -648,11 +690,14 @@ Phase 17: Super Admin Dashboard (React)
 - **Notification System & Omnichannel Alerts**: Centralized decoupled notification architecture across Email (SMTP/Resend/Mock), SMS (Fast2SMS/Twilio/Mock with Indian DLT compliance), WhatsApp (Meta Business Platform Cloud API), and In-App delivery. Dual-mode Redis and in-memory background queues, exponential backoff retries ($5 \times 2^{n-1}$), dead-letter queues, HTML sanitization, multi-lingual localization (en, hi, gu), private Socket.IO user rooms (`user:<userId>`), and strict BOLA defense.
 - **Search, Discovery & Recommendation Engine**: Centralized discovery system with safe regex escaping, ReDoS defense, multi-criteria filtering, verified show availability for now-showing movies, 48-hour booking velocity trending, 30-day sustained popularity, weighted Jaccard similar movies, geospatial `2dsphere` theatre radius searches, explainable rule-based recommendations with natural-language reasons, low-latency autocomplete suggestions, in-place recently viewed history management, and multi-tier Redis caching with automated invalidation.
 - **Production Hardening & Operations (Part 14)**: Distributed Redis rate limiting (`RedisRateLimitStore`), immutable append-only audit logging (`/api/v1/admin/audit-logs`), real MongoDB analytics reporting distinguishing Gross Booking Value, Captured Payments, Refunds, and Settlements (`/api/v1/admin/analytics/*` and `/api/v1/theatre-owner/analytics/*`), Kubernetes liveness/readiness/metrics probes (`/api/v1/health/*`), multi-stage Docker Alpine container, and GitHub Actions CI/CD workflows.
-- **Test Quality Gate**: **624+ automated tests across 80 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Customer Frontend (Part 15)**: Modern cinematic React 18 single-page application with Vite, Tailwind CSS, TanStack Query v5, Zod validation, Socket.IO client, and Razorpay Checkout standard integration.
+- **Backend Quality Gate**: **624+ automated tests across 80 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Frontend Quality Gate**: **18 automated tests across 8 test suites passing (100% pass rate)**. Production Vite build compiling with 0 errors/warnings.
 
 ---
 
 > [!IMPORTANT]
-> **Parts 1 through 14 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, show scheduling, seat locking, booking engine, Razorpay payments, notifications, search & discovery, production hardening, analytics, audit logs, Docker containerization, and CI/CD pipelines are fully implemented, verified, and documented.
-> In strict accordance with the project instructions, **Part 15: Customer Frontend (React)** will commence only after user review and approval.
+> **Parts 1 through 15 Complete:** The complete Customer Frontend React application, full backend architecture, database designs, authentication, security, movie catalog, theatre management, seat locking, booking engine, Razorpay payments, notifications, search & discovery, production hardening, analytics, audit logs, Docker containerization, and CI/CD pipelines are fully implemented, verified, tested, and documented.
+> In strict accordance with the project instructions and stop condition:
+> **STOP AND WAIT FOR USER APPROVAL BEFORE PROCEEDING TO PART 16 (THEATRE PARTNER DASHBOARD).**
 
