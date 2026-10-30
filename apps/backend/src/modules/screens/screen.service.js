@@ -180,4 +180,3 @@ export class ScreenService {
 }
 
 export default ScreenService;
-

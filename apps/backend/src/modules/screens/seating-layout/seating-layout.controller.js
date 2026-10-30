@@ -134,4 +134,3 @@ export class SeatingLayoutController {
 }
 
 export default SeatingLayoutController;
-

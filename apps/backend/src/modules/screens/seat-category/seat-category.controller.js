@@ -87,4 +87,3 @@ export class SeatCategoryController {
 }
 
 export default SeatCategoryController;
-

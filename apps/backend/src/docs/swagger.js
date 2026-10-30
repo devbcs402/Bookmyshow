@@ -250,6 +250,60 @@ const swaggerOptions = {
               }
             }
           }
+        },
+        Show: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '67220b3f81e7d23a104f9b01' },
+            partnerId: { type: 'string', example: '67220b3f81e7d23a104f9901' },
+            theatreId: { type: 'string', example: '67220b3f81e7d23a104f9911' },
+            screenId: { type: 'string', example: '67220b3f81e7d23a104f9951' },
+            movieId: { type: 'string', example: '67220b3f81e7d23a104f981a' },
+            cityId: { type: 'string', example: '67220b3f81e7d23a104f9701' },
+            showDate: { type: 'string', format: 'date-time', example: '2026-11-06T00:00:00.000Z' },
+            startTime: { type: 'string', format: 'date-time', example: '2026-11-06T19:30:00.000Z' },
+            endTime: { type: 'string', format: 'date-time', example: '2026-11-06T22:15:00.000Z' },
+            occupiedEndTime: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-11-06T22:35:00.000Z'
+            },
+            cleanupBufferMinutes: { type: 'integer', example: 20 },
+            timezone: { type: 'string', example: 'Asia/Kolkata' },
+            format: { type: 'string', example: 'IMAX_3D' },
+            language: { type: 'string', example: 'English' },
+            subtitleLanguage: { type: 'string', example: 'English' },
+            audioFormat: { type: 'string', example: 'Dolby Atmos' },
+            status: { type: 'string', example: 'PUBLISHED' },
+            layoutVersion: { type: 'integer', example: 1 },
+            totalSeats: { type: 'integer', example: 220 },
+            availableSeats: { type: 'integer', example: 220 },
+            pricingTiers: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  categoryCode: { type: 'string', example: 'RECLINER' },
+                  categoryName: { type: 'string', example: 'Royal Recliner' },
+                  basePrice: { type: 'number', example: 450.0 },
+                  effectivePrice: { type: 'number', example: 531.0 }
+                }
+              }
+            }
+          }
+        },
+        ShowPricing: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '67220b3f81e7d23a104f9c01' },
+            showId: { type: 'string', example: '67220b3f81e7d23a104f9b01' },
+            categoryCode: { type: 'string', example: 'RECLINER' },
+            basePrice: { type: 'number', example: 450.0 },
+            convenienceFee: { type: 'number', example: 0 },
+            taxPercent: { type: 'number', example: 18.0 },
+            effectivePrice: { type: 'number', example: 531.0 },
+            currency: { type: 'string', example: 'INR' }
+          }
         }
       }
     }

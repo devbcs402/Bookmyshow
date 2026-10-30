@@ -87,4 +87,3 @@ export class SeatService {
 }
 
 export default SeatService;
-

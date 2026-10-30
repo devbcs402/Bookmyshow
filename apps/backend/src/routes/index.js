@@ -18,6 +18,12 @@ import {
   screenAdminRoutes,
   screenPublicRoutes
 } from '../modules/screens/screen.routes.js';
+import {
+  showOwnerRoutes,
+  showPublicRoutes,
+  movieShowsPublicRoutes,
+  theatreShowsPublicRoutes
+} from '../modules/shows/show.routes.js';
 
 const router = Router();
 
@@ -47,6 +53,12 @@ router.use('/cities', cityPublicRoutes);
 router.use('/admin/movies', movieAdminRoutes);
 router.use('/admin/genres', genreAdminRoutes);
 router.use('/admin/languages', languageAdminRoutes);
+
+// Show Management & Scheduling routes
+router.use('/owner/shows', showOwnerRoutes);
+router.use('/shows', showPublicRoutes);
+router.use('/movies', movieShowsPublicRoutes);
+router.use('/theatres', theatreShowsPublicRoutes);
 
 // Subsequent domain modules will be mounted here:
 // router.use('/shows', showRoutes);

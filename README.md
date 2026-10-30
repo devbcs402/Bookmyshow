@@ -338,7 +338,40 @@ The complete specifications, schemas, 2D visual layout builder, validation engin
 
 ---
 
-## 11. Development Phases Overview
+## 11. Master Show Management & Scheduling Documentation Index (Part 8 Deliverables)
+
+The complete specifications, temporal interval collision formula, concurrency-safe screen locking, category pricing engine, and review reports are organized in `docs/shows/`:
+
+1. [01. Show Management & Scheduling Module Overview](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/01-show-module-overview.md)
+   - Module scope, architectural pillars, cross-domain bindings, and operational workflows.
+2. [02. Show Database Design & Schemas](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/02-show-database-design.md)
+   - Mongoose schemas for `shows` and `show_pricing`, denormalized snapshots, and compound indexes.
+3. [03. Show Scheduling & Operational Workflow](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/03-show-scheduling-workflow.md)
+   - Step-by-step sequence diagram for show scheduling, facility health checks, and duration calculations.
+4. [04. Screen Interval Conflict Detection Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/04-screen-conflict-detection.md)
+   - Temporal collision formula `(Start_E < End_N) AND (End_E > Start_N)`, buffer handling, and reschedule self-exclusions.
+5. [05. Concurrency & Race Condition Protection](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/05-concurrency-and-race-condition-protection.md)
+   - Two-tier concurrency defense: distributed Redis screen mutex with 10s auto-expiry & atomic Lua release + MongoDB ACID transactions.
+6. [06. Show Pricing Management](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/06-show-pricing-management.md)
+   - Category-to-layout invariance rule, base price, convenience fees, GST computation, and effective price formula.
+7. [07. Show Publishing and Cancellation Workflows](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/07-show-publishing-and-cancellation.md)
+   - Show lifecycle state machine, pre-publication checklist, mandatory cancellation reasons, and future refund trigger points.
+8. [08. Timezone & Date Handling Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/08-timezone-and-date-handling.md)
+   - UTC ISO 8601 storage, midnight calendar normalization, cinema IANA timezone association, and drift prevention.
+9. [09. Show Management & Scheduling API Documentation](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/09-show-api-documentation.md)
+   - Complete REST API specifications across 12 Owner and Public endpoints with query, param, and body validations.
+10. [10. Show Indexing Strategy & Performance Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/10-show-indexing-and-performance.md)
+    - ESR compound indexing rules, collision query acceleration, and zero-join customer city movie discovery.
+11. [11. Show Management & Scheduling Testing Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/11-show-testing-report.md)
+    - Full test suite report covering unit tests, integration tests, concurrency tests, and multi-tenant BOLA tests.
+12. [12. Show Management Security & Multi-Tenant Threat Assessment](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/12-show-security-review.md)
+    - OWASP API Security 2023 evaluation, anti-enumeration 404 responses, and server-side context derivation.
+13. [13. Show Module Final Review & Sign-Off Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/shows/13-show-module-review-report.md)
+    - Architectural review, requirement fulfillment matrix, and transition readiness for Part 9.
+
+---
+
+## 12. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
@@ -348,8 +381,8 @@ Phase 04: Authentication, Security & RBAC Implementation (COMPLETED)
 Phase 05: Movie Management Module & Taxonomies (COMPLETED)
 Phase 06: Theatre & Branch Management Module (COMPLETED)
 Phase 07: Screen & Seat Layout Management Module (COMPLETED)
-Phase 08: Show Scheduling Engine & Dynamic Pricing (PENDING APPROVAL)
-Phase 09: High-Concurrency Booking Engine & Redis Lua Locks
+Phase 08: Show Scheduling Engine & Dynamic Pricing (COMPLETED)
+Phase 09: High-Concurrency Booking Engine & Redis Lua Locks (PENDING APPROVAL)
 Phase 10: Payment Gateway & Asynchronous Webhooks
 Phase 11: Digital Ticket QR Engine & Notifications
 Phase 12: Customer & Theatre Partner Frontend Applications
@@ -359,7 +392,7 @@ Phase 14: Production Deployment & Observability
 
 ---
 
-## 12. Architecture Status & Quality Gates
+## 13. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-booking under race conditions via Redis Lua scripts + MongoDB ACID transactions.
@@ -369,12 +402,13 @@ Phase 14: Production Deployment & Observability
 - **Movie Catalog & Taxonomy**: Normalized `genres` and `languages`, denormalized `genreSlugs` indexing, 8-stage movie status lifecycle with dynamic theatrical state derivation, and Cloudinary media abstraction.
 - **Theatre & Branch Subsystem**: Multi-tenant cinema complexes, physical branch management, GeoJSON `2dsphere` proximity indexing (`$near`), BOLA/IDOR anti-enumeration defense, and staff delegation governance.
 - **Screen & Seating Layout Subsystem**: Multi-format auditorium management (`STANDARD`, `IMAX`, `DOLBY_ATMOS`, `4DX`), 2D spatial coordinate matrix, bulk generation engine, invariant validation engine, immutable layout versioning (`layoutVersion: 1, 2, 3...`), and physical chairs master inventory (`seats` collection).
+- **Show Scheduling Subsystem**: Temporal interval collision detection $[S_E < O_N \land O_E > S_N]$ with cleanup buffers, two-tier distributed screen concurrency locking, category-to-layout pricing invariance, UTC date normalization, and lifecycle status state machine.
 - **Payment Compliance**: Zero PCI-DSS footprint; Razorpay webhook verification via HMAC-SHA256 constant-time comparison.
-- **Test Quality Gate**: **259 automated tests across 32 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Test Quality Gate**: **308 automated tests across 39 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
 
 ---
 
 > [!IMPORTANT]
-> **Part 1, Part 2, Part 3, Part 4, Part 5, Part 6 & Part 7 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, and screen & seat layout management are fully implemented, verified, and documented.
-> In strict accordance with the project instructions, **Part 8: Show Scheduling Engine & Dynamic Pricing** will commence only after user review and approval.
+> **Part 1, Part 2, Part 3, Part 4, Part 5, Part 6, Part 7 & Part 8 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, and show management & scheduling are fully implemented, verified, and documented.
+> In strict accordance with the project instructions, **Part 9: High-Concurrency Booking Engine & Redis Lua Locks** will commence only after user review and approval.
 

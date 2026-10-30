@@ -164,4 +164,3 @@ export class ScreenController {
 }
 
 export default ScreenController;
-

@@ -143,4 +143,3 @@ export class SeatCategoryService {
 }
 
 export default SeatCategoryService;
-

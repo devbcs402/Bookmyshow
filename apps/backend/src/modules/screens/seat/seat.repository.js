@@ -67,4 +67,3 @@ export class SeatRepository {
 }
 
 export default SeatRepository;
-

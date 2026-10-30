@@ -117,4 +117,3 @@ export class ScreenRepository {
 }
 
 export default ScreenRepository;
-
