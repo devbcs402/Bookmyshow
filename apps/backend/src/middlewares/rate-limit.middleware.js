@@ -42,4 +42,3 @@ export default {
   globalRateLimiter,
   authRateLimiter
 };
-

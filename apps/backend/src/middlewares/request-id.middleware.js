@@ -20,4 +20,3 @@ export const requestIdMiddleware = (req, res, next) => {
 };
 
 export default requestIdMiddleware;
-

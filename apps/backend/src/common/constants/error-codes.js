@@ -35,4 +35,3 @@ export const ErrorCodes = Object.freeze({
 });
 
 export default ErrorCodes;
-

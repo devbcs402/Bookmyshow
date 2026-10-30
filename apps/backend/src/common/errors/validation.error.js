@@ -9,4 +9,3 @@ export class ValidationError extends AppError {
 }
 
 export default ValidationError;
-

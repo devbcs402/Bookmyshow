@@ -13,4 +13,3 @@ export class AuthenticationError extends AppError {
 }
 
 export default AuthenticationError;
-

@@ -5,4 +5,3 @@ export const createTestApp = () => {
 };
 
 export default createTestApp;
-

@@ -50,4 +50,3 @@ router.get('/live', HealthController.getLiveness);
 router.get('/ready', HealthController.getReadiness);
 
 export default router;
-

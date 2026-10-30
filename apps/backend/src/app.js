@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 
 import config from './config/env.js';
@@ -37,6 +38,9 @@ export const createApp = () => {
 
   // 5. URL-Encoded Body Parser
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+  // 6. Cookie Parser for secure HttpOnly cookie management
+  app.use(cookieParser());
 
   // 6. Request Logging & Duration Telemetry
   app.use((req, res, next) => {

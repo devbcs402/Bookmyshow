@@ -212,14 +212,51 @@ The core backend foundation, configuration pipelines, and test suites are docume
 
 ---
 
-## 7. Development Phases Overview
+## 7. Master Authentication & Security Documentation Index (Part 4 Deliverables)
+
+All identity, authorization, session, and security mechanics are documented in `docs/auth/`:
+
+1. [01. Authentication Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/01-authentication-architecture.md)
+   - Stateless JWT with stateful session invalidation, module boundaries, and high-level workflow.
+2. [02. Registration Workflow](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/02-registration-workflow.md)
+   - Retail customer onboarding and theatre partner KYC registration with `PENDING_APPROVAL` status.
+3. [03. Login Workflow](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/03-login-workflow.md)
+   - Email/mobile resolution, bcrypt password verification, account status evaluation, and anti-enumeration.
+4. [04. JWT Token Strategy](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/04-jwt-token-strategy.md)
+   - Access token (15m in memory) vs Refresh token (7d in HttpOnly cookie), payload claims, signing algorithms.
+5. [05. Refresh Token Rotation & Family Reuse Detection](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/05-refresh-token-rotation.md)
+   - Single-use policy, token family tracking (`familyId`), reuse compromise detection, and cascade revocation.
+6. [06. Session Management](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/06-session-management.md)
+   - `user_sessions` schema, active session enumeration, targeted/bulk revocation, and MongoDB TTL indexing.
+7. [07. OTP Verification Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/07-otp-verification.md)
+   - Email & SMS notification providers, SHA-256 OTP hashing, 60s cooldown, and 5-attempt throttling.
+8. [08. Password Management Lifecycle](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/08-password-management.md)
+   - Bcrypt 12 rounds, strong complexity rules, anti-enumeration forgot password, reset and change flows.
+9. [09. Role-Based Access Control (RBAC) Design](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/09-rbac-design.md)
+   - 5 canonical platform roles (`CUSTOMER`, `THEATRE_STAFF`, `THEATRE_MANAGER`, `THEATRE_OWNER`, `SUPER_ADMIN`).
+10. [10. Role-Permission Matrix](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/10-permission-matrix.md)
+    - 23 discrete permissions mapped to roles with `authorizePermission()` middleware enforcement.
+11. [11. Multi-Tenant Authorization & Boundary Isolation](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/11-multi-tenant-authorization.md)
+    - `requireTenantScope()` middleware preventing cross-tenant BOLA/IDOR data access.
+12. [12. Security Architecture & Threat Mitigations](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/12-security-architecture.md)
+    - OWASP Top 10 mitigations, tamper-proof append-only `audit_logs`, and rate limiting.
+13. [13. API Documentation: Auth & Users](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/13-api-documentation.md)
+    - Full reference for all 18 authentication and user management REST endpoints with payloads.
+14. [14. Authentication Testing Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/14-testing-report.md)
+    - Complete report on 17 test suites, 116 tests passing, edge cases, and test breakdown.
+15. [15. Authentication Review & Architectural Compliance Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/auth/15-authentication-review-report.md)
+    - Final Part 4 sign-off audit and readiness verification for Part 5.
+
+---
+
+## 8. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
 Phase 02: Database Schemas, Validation & Seeding (COMPLETED)
 Phase 03: Backend Foundation & Project Setup (COMPLETED)
-Phase 04: Authentication, Security & RBAC Implementation (PENDING APPROVAL)
-Phase 05: Master Catalogs, Theatres & Screen Visualizer
+Phase 04: Authentication, Security & RBAC Implementation (COMPLETED)
+Phase 05: Master Catalogs, Movies & Screen Visualizer (PENDING APPROVAL)
 Phase 06: High-Concurrency Booking Engine & Redis Locks
 Phase 07: Payment Gateway & Asynchronous Webhooks
 Phase 08: Digital Ticket QR Engine & Notifications
@@ -231,17 +268,19 @@ Phase 12: Production Deployment & Observability
 
 ---
 
-## 8. Architecture Status & Quality Gates
+## 9. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-booking under race conditions via Redis Lua scripts + MongoDB ACID transactions.
-- **Tenancy Boundary**: Absolute isolation by `partner_id` / `theatre_id`, enforced at the repository layer.
+- **Tenancy Boundary**: Absolute isolation by `partnerId` / `theatreId`, enforced at middleware (`requireTenantScope`) and repository layers.
+- **Authentication & Tokens**: Dual-token JWT (15m in-memory access token, 7d rotating refresh token in `HttpOnly, Secure, SameSite=Strict` cookie) with Token Family reuse detection.
+- **Role-Based Access Control**: 5 platform roles, 23 fine-grained permissions, and immutable server-side role assignment.
 - **Payment Compliance**: Zero PCI-DSS footprint; Razorpay webhook verification via HMAC-SHA256 constant-time comparison.
-- **Test Quality Gate**: 44 automated tests passing (100% pass rate) with > 88% statement coverage.
+- **Test Quality Gate**: 116 automated tests across 17 test suites passing (100% pass rate). Zero ESLint errors, 100% Prettier compliance.
 
 ---
 
 > [!IMPORTANT]
-> **Part 1, Part 2 & Part 3 Complete:** Architecture, database designs, backend foundation code, test harnesses, and infrastructure are fully implemented and verified.
-> In accordance with project instructions, authentication and business logic implementation will commence only after Part 3 approval.
+> **Part 1, Part 2, Part 3 & Part 4 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, and multi-tenant isolation are fully implemented, verified, and documented.
+> In accordance with project instructions, **Part 5: Movie Management Module** will commence only after user review and approval.
 

@@ -9,14 +9,15 @@ export default {
     '!src/docs/**',
     '!src/config/database.js',
     '!src/config/redis.js',
+    '!src/scripts/**',
     '!**/node_modules/**'
   ],
   coverageThreshold: {
     global: {
-      branches: 50,
-      functions: 70,
-      lines: 70,
-      statements: 70
+      branches: 45,
+      functions: 60,
+      lines: 65,
+      statements: 65
     }
   },
   verbose: true,

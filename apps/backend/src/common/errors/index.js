@@ -6,4 +6,3 @@ export { NotFoundError } from './not-found.error.js';
 export { ConflictError } from './conflict.error.js';
 export { RateLimitError } from './rate-limit.error.js';
 export { DatabaseError } from './database.error.js';
-

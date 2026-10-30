@@ -34,4 +34,3 @@ export const validate = schema => {
 };
 
 export default validate;
-

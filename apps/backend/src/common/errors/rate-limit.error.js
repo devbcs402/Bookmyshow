@@ -12,4 +12,3 @@ export class RateLimitError extends AppError {
 }
 
 export default RateLimitError;
-

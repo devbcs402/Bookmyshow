@@ -77,4 +77,3 @@ describe('Standard API Response Unit Tests', () => {
     expect(meta.hasPrevPage).toBe(true);
   });
 });
-

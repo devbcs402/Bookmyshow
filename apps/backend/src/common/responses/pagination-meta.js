@@ -10,4 +10,3 @@ export class PaginationMeta {
 }
 
 export default PaginationMeta;
-
