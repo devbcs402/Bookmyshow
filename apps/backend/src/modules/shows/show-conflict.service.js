@@ -47,4 +47,3 @@ export class ShowConflictService {
 }
 
 export default ShowConflictService;
-

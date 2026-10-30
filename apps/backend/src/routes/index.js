@@ -24,6 +24,8 @@ import {
   movieShowsPublicRoutes,
   theatreShowsPublicRoutes
 } from '../modules/shows/show.routes.js';
+import seatLockRoutes from '../modules/seat-locks/seat-lock.routes.js';
+import { bookingRoutes, bookingOwnerRoutes } from '../modules/bookings/booking.routes.js';
 
 const router = Router();
 
@@ -57,11 +59,15 @@ router.use('/admin/languages', languageAdminRoutes);
 // Show Management & Scheduling routes
 router.use('/owner/shows', showOwnerRoutes);
 router.use('/shows', showPublicRoutes);
+router.use('/shows', seatLockRoutes);
 router.use('/movies', movieShowsPublicRoutes);
 router.use('/theatres', theatreShowsPublicRoutes);
 
+// Booking Engine routes (Part 10)
+router.use('/bookings', bookingRoutes);
+router.use('/owner/bookings', bookingOwnerRoutes);
+
 // Subsequent domain modules will be mounted here:
-// router.use('/shows', showRoutes);
-// router.use('/bookings', bookingRoutes);
+// router.use('/payments', paymentRoutes);
 
 export default router;

@@ -22,7 +22,16 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
 
-  LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info')
+  LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
+
+  SEAT_LOCK_TTL_SECONDS: z.coerce.number().int().min(60).max(600).default(300),
+  MAX_SEATS_PER_LOCK: z.coerce.number().int().min(1).max(10).default(10),
+  MAX_LOCK_RENEWALS: z.coerce.number().int().min(0).max(5).default(2),
+
+  BOOKING_PAYMENT_WINDOW_SECONDS: z.coerce.number().int().min(60).max(900).default(300),
+  DEFAULT_CONVENIENCE_FEE: z.coerce.number().min(0).default(30.0),
+  DEFAULT_TAX_PERCENT: z.coerce.number().min(0).default(18.0),
+  BOOKING_CANCELLATION_CUTOFF_HOURS: z.coerce.number().min(0).default(2)
 });
 
 const parseConfig = () => {

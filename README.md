@@ -371,7 +371,77 @@ The complete specifications, temporal interval collision formula, concurrency-sa
 
 ---
 
-## 12. Development Phases Overview
+## 12. Master Seat Availability & Locking Documentation Index (Part 9 Deliverables)
+
+The complete specifications, atomic multi-seat Lua locking engine, safe release compare-and-delete logic, Socket.IO real-time event synchronization, and test reports are organized in `docs/seat-locks/`:
+
+1. [01. Seat Availability & Temporary Seat Locking Overview](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/01-seat-availability-overview.md)
+   - Domain overview, business requirements, seat state lifecycles, and user journeys.
+2. [02. Seat Locking Architecture & Data Flows](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/02-seat-locking-architecture.md)
+   - Ephemeral Redis tier vs durable MongoDB tier, component workflows, and sequence diagrams.
+3. [03. Redis Key Design & Memory Optimization](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/03-redis-key-design.md)
+   - Key conventions (`seatlock:{showId}:{seatId}`), non-blocking SCAN iteration, and memory calculations.
+4. [04. Atomic Multi-Seat Locking Mechanics](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/04-atomic-multi-seat-locking.md)
+   - Deep dive into `ACQUIRE_MULTI_SEAT_LOCKS_LUA`, all-or-nothing guarantees, and zero partial locks.
+5. [05. Lock Expiration & Renewal Mechanics](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/05-lock-expiration-and-renewal.md)
+   - Redis TTL authority, safe renewal script `RENEW_MULTI_SEAT_LOCKS_LUA`, and anti-squatting ceilings.
+6. [06. Lock Ownership & Security (BOLA/IDOR Defense)](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/06-lock-ownership-and-security.md)
+   - Dual-identifier verification (`lockId` + `userId`), safe compare-and-delete, and zero PII WebSocket broadcasts.
+7. [07. Seat Availability Reconciliation Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/07-seat-availability-reconciliation.md)
+   - Tri-tier synthesis (Physical -> MongoDB Confirmed -> Redis Holds), user perspective (`LOCKED_BY_ME`), and pricing attachment.
+8. [08. Socket.IO Real-Time Seat Events & Multi-Instance Scaling](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/08-socket-io-seat-events.md)
+   - Room architecture `show:{showId}`, event specifications (`seat:locked`, `seat:released`, etc.), and Redis Pub/Sub adapter.
+9. [09. Concurrency & Race Condition Protection](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/09-concurrency-and-race-condition-protection.md)
+   - Multi-layer defense analysis, simultaneous overlapping request simulations, and throughput benchmarks.
+10. [10. Failure Handling, Fault Tolerance & Recovery](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/10-failure-handling-and-recovery.md)
+    - Stale lock self-healing, Redis failover handling, cart abandonment handling, and health probes.
+11. [11. Seat Availability & Locking REST API Reference](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/11-seat-lock-api-documentation.md)
+    - Full API reference for seats layout, multi-seat lock acquisition, safe release, and lock renewal.
+12. [12. Seat Availability & Locking Testing Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/12-seat-lock-testing-report.md)
+    - 63 automated tests breakdown (unit, integration, concurrency, BOLA, socket events) with 100% pass rate.
+13. [13. Seat Availability & Locking Security Review](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/13-seat-lock-security-review.md)
+    - Threat modeling, BOLA/IDOR mitigations, token authentication, and privacy postures.
+14. [14. Seat Availability & Locking Module Review Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/seat-locks/14-seat-lock-module-review-report.md)
+    - Engineering sign-off, requirement fulfillment matrix, and transition readiness for Part 10.
+
+---
+
+## 13. Master Booking Engine Documentation Index (Part 10 Deliverables)
+
+The complete specifications, status state machine, server-side pricing engine, idempotency architecture, automated expiration, and security reports are organized in `docs/bookings/`:
+
+1. [01. Booking Engine Overview & Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/01-booking-engine-overview.md)
+   - Module scope, architecture, core objectives, and domain boundary design.
+2. [02. Booking Lifecycle & State Machine Architecture](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/02-booking-lifecycle.md)
+   - Formal 7-status state machine, transition rules matrix, and chronological audit trail schema.
+3. [03. Booking Creation Workflow & Checkout Processing](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/03-booking-creation-workflow.md)
+   - Step-by-step sequence diagram, lock ownership validation, show viability, and transaction persistence.
+4. [04. Seat Lock Integration & Coordination](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/04-seat-lock-integration.md)
+   - Two-phase reservation model (ephemeral Redis hold to durable MongoDB booking) and unified boundary model.
+5. [05. Booking Consistency Strategy & Double-Booking Prevention](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/05-booking-consistency-strategy.md)
+   - Multi-tier defense-in-depth: Redis lock verification, application conflict check, and compound unique partial index.
+6. [06. Idempotency Architecture & Duplicate Request Protection](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/06-idempotency.md)
+   - Client idempotency keys, SHA-256 payload fingerprinting, and Redis response caching (600s TTL).
+7. [07. Server-Side Pricing Engine & Tax Calculation](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/07-pricing-engine.md)
+   - Authoritative pricing evaluation, convenience fees, 18% GST calculation, and epsilon rounding precision.
+8. [08. Automated Booking Expiration & Inventory Reclamation](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/08-booking-expiration.md)
+   - Redis Sorted Set index (`bookings:expirations`), distributed Redlock sweeper, and Socket.IO release sync.
+9. [09. Booking Cancellation & Refund Policy Engine](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/09-booking-cancellation.md)
+   - Cancellation cutoff window (2 hours before show), role permissions, and partial index auto-release.
+10. [10. Booking Engine REST API Reference](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/10-booking-api-documentation.md)
+    - Complete REST API specifications for checkout, details, user history, partner bookings, and cancellation.
+11. [11. Booking Security, BOLA Protection & Cryptographic QR Verification](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/11-booking-security.md)
+    - Anti-counterfeit HMAC-SHA256 gate QR tokens, tenant isolation, and BOLA/IDOR defense.
+12. [12. Concurrency, Consistency & Race Condition Analysis](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/12-concurrency-and-race-conditions.md)
+    - Simulated edge cases: competing requests, partial booking prevention, and payment vs expiration race.
+13. [13. Booking Engine Testing Report & Quality Verification](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/13-testing-report.md)
+    - 53 new automated tests breakdown across 9 suites (unit, integration, concurrency, BOLA) with 100% pass rate.
+14. [14. Booking Engine Review & Approval Report](file:///d:/YASH%20KACHA/Bookmyshow/docs/bookings/14-booking-engine-review.md)
+    - Architectural sign-off, checklist verification, and readiness audit for Part 11.
+
+---
+
+## 14. Development Phases Overview
 
 ```
 Phase 01: Architecture & Technical Foundations (COMPLETED)
@@ -382,20 +452,21 @@ Phase 05: Movie Management Module & Taxonomies (COMPLETED)
 Phase 06: Theatre & Branch Management Module (COMPLETED)
 Phase 07: Screen & Seat Layout Management Module (COMPLETED)
 Phase 08: Show Scheduling Engine & Dynamic Pricing (COMPLETED)
-Phase 09: High-Concurrency Booking Engine & Redis Lua Locks (PENDING APPROVAL)
-Phase 10: Payment Gateway & Asynchronous Webhooks
-Phase 11: Digital Ticket QR Engine & Notifications
-Phase 12: Customer & Theatre Partner Frontend Applications
-Phase 13: Performance, Chaos & Load Testing
-Phase 14: Production Deployment & Observability
+Phase 09: Seat Availability & Temporary Seat Locking System (COMPLETED)
+Phase 10: Booking Engine Module (Production-Grade) (COMPLETED)
+Phase 11: Payment Processing & Gateway Integration (Razorpay) (PENDING APPROVAL)
+Phase 12: Digital Ticket Delivery, PDF Invoicing & Notifications
+Phase 13: Customer & Theatre Partner Frontend Applications
+Phase 14: Performance, Chaos & Load Testing
+Phase 15: Production Deployment & Observability
 ```
 
 ---
 
-## 13. Architecture Status & Quality Gates
+## 15. Architecture Status & Quality Gates
 
 - **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
-- **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-booking under race conditions via Redis Lua scripts + MongoDB ACID transactions.
+- **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-locking and zero double-booking under race conditions via Redis Lua scripts, atomic MongoDB transactions, and compound unique partial indexes.
 - **Tenancy Boundary**: Absolute isolation by `partnerId` / `theatreId`, enforced at middleware (`requireTenantScope`), service layer, and repository layers.
 - **Authentication & Tokens**: Dual-token JWT (15m in-memory access token, 7d rotating refresh token in `HttpOnly, Secure, SameSite=Strict` cookie) with Token Family reuse detection.
 - **Role-Based Access Control**: 5 platform roles, 24 fine-grained permissions, and immutable server-side role assignment.
@@ -403,12 +474,14 @@ Phase 14: Production Deployment & Observability
 - **Theatre & Branch Subsystem**: Multi-tenant cinema complexes, physical branch management, GeoJSON `2dsphere` proximity indexing (`$near`), BOLA/IDOR anti-enumeration defense, and staff delegation governance.
 - **Screen & Seating Layout Subsystem**: Multi-format auditorium management (`STANDARD`, `IMAX`, `DOLBY_ATMOS`, `4DX`), 2D spatial coordinate matrix, bulk generation engine, invariant validation engine, immutable layout versioning (`layoutVersion: 1, 2, 3...`), and physical chairs master inventory (`seats` collection).
 - **Show Scheduling Subsystem**: Temporal interval collision detection $[S_E < O_N \land O_E > S_N]$ with cleanup buffers, two-tier distributed screen concurrency locking, category-to-layout pricing invariance, UTC date normalization, and lifecycle status state machine.
-- **Payment Compliance**: Zero PCI-DSS footprint; Razorpay webhook verification via HMAC-SHA256 constant-time comparison.
-- **Test Quality Gate**: **308 automated tests across 39 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
+- **Seat Availability & Locking Subsystem**: Distributed atomic multi-seat locking via single-threaded Redis Lua scripts (`ACQUIRE_MULTI_SEAT_LOCKS_LUA`), safe compare-and-delete release (`RELEASE_MULTI_SEAT_LOCKS_LUA`), renewal ceiling limits, BOLA/IDOR protection with dual-identifier validation (`lockId` + `userId`), non-blocking SCAN iteration, and Socket.IO real-time broadcasts with Redis Pub/Sub adapter.
+- **Booking Engine Subsystem**: Dual-phase reservation transition, centralized status state machine (`BookingStatusService`), server-side dynamic pricing with epsilon rounding, client idempotency caching with SHA-256 fingerprinting, distributed expiration worker via Redis Sorted Sets (`bookings:expirations`), and tamper-proof HMAC-SHA256 gate QR admittance tokens.
+- **Payment Compliance**: Zero PCI-DSS footprint; Razorpay webhook verification via HMAC-SHA256 constant-time comparison (prepared for Part 11).
+- **Test Quality Gate**: **424 automated tests across 56 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
 
 ---
 
 > [!IMPORTANT]
-> **Part 1, Part 2, Part 3, Part 4, Part 5, Part 6, Part 7 & Part 8 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, and show management & scheduling are fully implemented, verified, and documented.
-> In strict accordance with the project instructions, **Part 9: High-Concurrency Booking Engine & Redis Lua Locks** will commence only after user review and approval.
+> **Parts 1 through 10 Complete:** System architecture, database designs, backend foundation, authentication, security, user management, movie management, theatre & branch management, screen & seat layout management, show management & scheduling, seat availability & temporary seat locking, and the production-grade booking engine module are fully implemented, verified, and documented.
+> In strict accordance with the project instructions, **Part 11: Payment Processing & Gateway Integration (Razorpay)** will commence only after user review and approval.
 

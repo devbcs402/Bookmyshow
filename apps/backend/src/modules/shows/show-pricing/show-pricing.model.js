@@ -78,4 +78,3 @@ showPricingSchema.index({ partnerId: 1, showId: 1 });
 
 export const ShowPricing = mongoose.model('show_pricing', showPricingSchema);
 export default ShowPricing;
-

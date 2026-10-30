@@ -2,6 +2,12 @@ import { Server } from 'socket.io';
 import config from '../config/env.js';
 import logger from '../config/logger.js';
 import SocketEvents from './events.js';
+import { verifyAccessToken } from '../modules/auth/auth.utils.js';
+import {
+  registerSeatLockSocketHandlers,
+  initRedisPubSub,
+  closeRedisPubSub
+} from '../modules/seat-locks/seat-lock.socket.js';
 
 let io = null;
 
@@ -32,20 +38,42 @@ export const initSocketServer = httpServer => {
     pingInterval: 25000
   });
 
-  // Socket Authentication Middleware Hook (Ready for JWT handshake verification in Part 4)
+  // Socket Authentication Middleware
   io.use((socket, next) => {
-    const token = socket.handshake.auth?.token || socket.handshake.headers?.authorization;
-    // For development/initialization phase, allow unauthenticated connection with guest scope
-    socket.data.user = token ? { role: 'AUTHENTICATED' } : { role: 'GUEST' };
-    next();
+    const rawToken = socket.handshake.auth?.token || socket.handshake.headers?.authorization;
+    const token = rawToken?.replace(/^Bearer\s+/i, '');
+
+    if (token) {
+      try {
+        const payload = verifyAccessToken(token);
+        if (payload?.sub) {
+          socket.data.user = {
+            id: payload.sub,
+            role: payload.role,
+            email: payload.email,
+            isAuthenticated: true
+          };
+          return next();
+        }
+      } catch (_err) {
+        // Fall back to guest scope on invalid or expired token
+      }
+    }
+
+    socket.data.user = { role: 'GUEST', isAuthenticated: false };
+    return next();
   });
 
   io.on(SocketEvents.CONNECTION, socket => {
     logger.info({
       msg: 'Socket client connected',
       socketId: socket.id,
-      role: socket.data.user?.role
+      role: socket.data.user?.role,
+      isAuthenticated: socket.data.user?.isAuthenticated
     });
+
+    // Register Seat Lock real-time room listeners
+    registerSeatLockSocketHandlers(socket, io);
 
     socket.on(SocketEvents.DISCONNECT, reason => {
       logger.info({ msg: 'Socket client disconnected', socketId: socket.id, reason });
@@ -54,6 +82,11 @@ export const initSocketServer = httpServer => {
     socket.on(SocketEvents.ERROR, error => {
       logger.error({ msg: 'Socket client error', socketId: socket.id, error: error.message });
     });
+  });
+
+  // Initialize cross-instance Redis Pub/Sub adapter
+  initRedisPubSub(io).catch(err => {
+    logger.warn({ msg: 'Redis Pub/Sub adapter initialization deferred', error: err.message });
   });
 
   logger.info('Socket.IO event server initialized successfully');
@@ -70,6 +103,7 @@ export const getSocketIO = () => {
 };
 
 export const closeSocketServer = async () => {
+  await closeRedisPubSub();
   if (io) {
     logger.info('Closing Socket.IO connections...');
     await new Promise(resolve => io.close(resolve));

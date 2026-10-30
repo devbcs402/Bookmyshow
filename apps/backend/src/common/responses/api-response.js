@@ -44,6 +44,7 @@ export class ApiResponse {
     const responsePayload = {
       success: false,
       message,
+      errorCode,
       error: {
         code: errorCode,
         ...(details ? { details } : {})

@@ -58,4 +58,3 @@ export class ShowPricingController {
 }
 
 export default ShowPricingController;
-

@@ -196,8 +196,57 @@ export const requireTenantScope = (partnerIdExtractor = 'params.partnerId') => {
   };
 };
 
+/**
+ * Optional Authentication Middleware
+ * Populates req.user if a valid token is provided, but continues as unauthenticated guest otherwise.
+ */
+export const optionalAuthenticate = async (req, _res, next) => {
+  try {
+    let token = null;
+    const authHeader = req.headers.authorization;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } else if (req.cookies && req.cookies.accessToken) {
+      token = req.cookies.accessToken;
+    }
+
+    if (!token) {
+      req.user = null;
+      return next();
+    }
+
+    try {
+      const payload = verifyAccessToken(token);
+      if (payload.type === 'ACCESS_TOKEN') {
+        const session = await AuthRepository.findSessionById(payload.sid);
+        if (session && !session.isRevoked && session.expiresAt >= new Date()) {
+          const user = await AuthRepository.findUserById(payload.sub);
+          if (user && user.isActive && !user.deletedAt) {
+            req.user = {
+              id: String(user._id),
+              email: user.email,
+              role: user.role,
+              partnerId: user.partnerId ? String(user.partnerId) : null,
+              sessionId: String(session._id),
+              permissions: RolePermissions[user.role] || []
+            };
+          }
+        }
+      }
+    } catch (_ignore) {
+      req.user = null;
+    }
+
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export default {
   authenticate,
+  optionalAuthenticate,
   authorize,
   authorizeRoles,
   authorizePermission,

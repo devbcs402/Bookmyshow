@@ -304,6 +304,284 @@ const swaggerOptions = {
             effectivePrice: { type: 'number', example: 531.0 },
             currency: { type: 'string', example: 'INR' }
           }
+        },
+        SeatAvailabilitySeat: {
+          type: 'object',
+          properties: {
+            seatId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0f3' },
+            seatLabel: { type: 'string', example: 'A1' },
+            columnNumber: { type: 'integer', example: 1 },
+            gridCol: { type: 'integer', example: 0 },
+            categoryCode: { type: 'string', example: 'RECLINER' },
+            type: { type: 'string', example: 'RECLINER' },
+            price: { type: 'number', example: 531.0 },
+            basePrice: { type: 'number', example: 450.0 },
+            status: {
+              type: 'string',
+              enum: [
+                'AVAILABLE',
+                'LOCKED_BY_ME',
+                'LOCKED_BY_OTHER',
+                'BOOKED',
+                'MAINTENANCE',
+                'BLOCKED'
+              ],
+              example: 'AVAILABLE'
+            },
+            isSelectable: { type: 'boolean', example: true },
+            lockedUntil: { type: 'string', format: 'date-time', nullable: true },
+            accessibility: {
+              type: 'object',
+              properties: {
+                isWheelchairAccessible: { type: 'boolean', example: false },
+                hasCompanionSeat: { type: 'boolean', example: false }
+              }
+            }
+          }
+        },
+        SeatAvailabilityResponse: {
+          type: 'object',
+          properties: {
+            showId: { type: 'string', example: '67220b3f81e7d23a104f9b01' },
+            screenId: { type: 'string', example: '67220b3f81e7d23a104f9951' },
+            layoutVersion: { type: 'integer', example: 1 },
+            showStatus: { type: 'string', example: 'PUBLISHED' },
+            isBookable: { type: 'boolean', example: true },
+            viewerUserId: { type: 'string', nullable: true, example: '65f1a2b3c4d5e6f7a8b9c0u1' },
+            summary: {
+              type: 'object',
+              properties: {
+                totalPhysicalSeats: { type: 'integer', example: 250 },
+                availableSeats: { type: 'integer', example: 220 },
+                lockedSeats: { type: 'integer', example: 10 },
+                bookedSeats: { type: 'integer', example: 15 },
+                maintenanceSeats: { type: 'integer', example: 5 }
+              }
+            },
+            pricingTiers: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  categoryCode: { type: 'string', example: 'RECLINER' },
+                  categoryName: { type: 'string', example: 'Royal Recliner' },
+                  basePrice: { type: 'number', example: 450.0 },
+                  effectivePrice: { type: 'number', example: 531.0 }
+                }
+              }
+            },
+            rows: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  rowLabel: { type: 'string', example: 'A' },
+                  categoryCode: { type: 'string', example: 'RECLINER' },
+                  seats: {
+                    type: 'array',
+                    items: { $ref: '#/components/schemas/SeatAvailabilitySeat' }
+                  }
+                }
+              }
+            }
+          }
+        },
+        SeatLockAcquireRequest: {
+          type: 'object',
+          required: ['seatIds'],
+          properties: {
+            seatIds: {
+              type: 'array',
+              items: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0f3' },
+              minItems: 1,
+              maxItems: 10,
+              description: 'Array of valid MongoDB seat ObjectIds (up to 10 seats)'
+            }
+          }
+        },
+        SeatLockAcquireResponse: {
+          type: 'object',
+          properties: {
+            lockId: { type: 'string', example: 'c6a32d1f-8e4b-4a5c-9c71-2b0f4a8d9e23' },
+            showId: { type: 'string', example: '67220b3f81e7d23a104f9b01' },
+            userId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0u1' },
+            lockedSeats: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  seatId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0f3' },
+                  seatLabel: { type: 'string', example: 'A1' },
+                  categoryCode: { type: 'string', example: 'RECLINER' },
+                  unitPrice: { type: 'number', example: 531.0 }
+                }
+              }
+            },
+            ttlSeconds: { type: 'integer', example: 300 },
+            expiresAt: { type: 'string', format: 'date-time', example: '2026-11-06T19:05:00.000Z' },
+            remainingSeconds: { type: 'integer', example: 300 },
+            renewalCount: { type: 'integer', example: 0 },
+            maxRenewals: { type: 'integer', example: 2 }
+          }
+        },
+        SeatLockReleaseRequest: {
+          type: 'object',
+          required: ['lockId', 'seatIds'],
+          properties: {
+            lockId: {
+              type: 'string',
+              format: 'uuid',
+              example: 'c6a32d1f-8e4b-4a5c-9c71-2b0f4a8d9e23'
+            },
+            seatIds: {
+              type: 'array',
+              items: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0f3' },
+              minItems: 1,
+              maxItems: 10
+            }
+          }
+        },
+        SeatLockRenewRequest: {
+          type: 'object',
+          required: ['lockId', 'seatIds'],
+          properties: {
+            lockId: {
+              type: 'string',
+              format: 'uuid',
+              example: 'c6a32d1f-8e4b-4a5c-9c71-2b0f4a8d9e23'
+            },
+            seatIds: {
+              type: 'array',
+              items: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0f3' },
+              minItems: 1,
+              maxItems: 10
+            }
+          }
+        },
+        BookingCreateRequest: {
+          type: 'object',
+          required: ['showId', 'seatIds'],
+          properties: {
+            showId: {
+              type: 'string',
+              example: '67220b3f81e7d23a104f9b01',
+              description: 'Valid MongoDB ObjectId of the published show'
+            },
+            seatIds: {
+              type: 'array',
+              items: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0f3' },
+              minItems: 1,
+              maxItems: 10,
+              description: 'Array of seat ObjectIds currently locked by the authenticated customer'
+            }
+          }
+        },
+        BookingCancelRequest: {
+          type: 'object',
+          properties: {
+            reason: {
+              type: 'string',
+              example: 'Change of schedule plans',
+              maxLength: 300,
+              description: 'Optional customer or partner reason for cancellation'
+            }
+          }
+        },
+        Booking: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', example: '67220b3f81e7d23a104f9d01' },
+            bookingReference: { type: 'string', example: 'BK-20261030-XYZ789' },
+            customerId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0u1' },
+            partnerId: { type: 'string', example: '67220b3f81e7d23a104f9901' },
+            theatreId: { type: 'string', example: '67220b3f81e7d23a104f9911' },
+            screenId: { type: 'string', example: '67220b3f81e7d23a104f9951' },
+            showId: { type: 'string', example: '67220b3f81e7d23a104f9b01' },
+            movieId: { type: 'string', example: '67220b3f81e7d23a104f981a' },
+            seats: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  seatId: { type: 'string', example: '65f1a2b3c4d5e6f7a8b9c0f3' },
+                  seatLabel: { type: 'string', example: 'A1' },
+                  categoryCode: { type: 'string', example: 'RECLINER' },
+                  basePrice: { type: 'number', example: 450.0 },
+                  convenienceFee: { type: 'number', example: 30.0 },
+                  taxAmount: { type: 'number', example: 5.4 },
+                  finalPrice: { type: 'number', example: 485.4 }
+                }
+              }
+            },
+            totalSeats: { type: 'integer', example: 1 },
+            baseAmount: { type: 'number', example: 450.0 },
+            convenienceFee: { type: 'number', example: 30.0 },
+            taxAmount: { type: 'number', example: 5.4 },
+            discountAmount: { type: 'number', example: 0 },
+            netPayableAmount: { type: 'number', example: 485.4 },
+            currency: { type: 'string', example: 'INR' },
+            status: {
+              type: 'string',
+              enum: [
+                'PENDING_PAYMENT',
+                'CONFIRMED',
+                'FAILED',
+                'EXPIRED',
+                'CANCELLED',
+                'REFUND_PENDING',
+                'REFUNDED'
+              ],
+              example: 'PENDING_PAYMENT'
+            },
+            snapshot: {
+              type: 'object',
+              properties: {
+                movieTitle: { type: 'string', example: 'Inception' },
+                moviePosterUrl: { type: 'string', example: 'https://images.unsplash.com/photo-1' },
+                censorRating: { type: 'string', example: 'UA' },
+                durationMins: { type: 'integer', example: 148 },
+                format: { type: 'string', example: 'IMAX_3D' },
+                language: { type: 'string', example: 'English' },
+                theatreName: { type: 'string', example: 'PVR ICON' },
+                theatreAddress: { type: 'string', example: 'Oberoi Mall, Goregaon, Mumbai' },
+                screenName: { type: 'string', example: 'Audi 1' },
+                showStartTime: { type: 'string', format: 'date-time' },
+                showEndTime: { type: 'string', format: 'date-time' },
+                seatSummary: { type: 'string', example: 'A1, A2' }
+              }
+            },
+            qrCodePayload: {
+              type: 'string',
+              example:
+                'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJCSy0yMDI2MTAzMC1YWVo3ODkiLCJzaG93SWQiOiI2NzIyMGIzZjgxZTdkMjNhMTA0ZjliMDEiLCJzdGF0dXMiOiJQRU5ESU5HX1BBWU1FTlQiLCJpYXQiOjE3Mzg0MjgwMDB9.signature'
+            },
+            expiresAt: { type: 'string', format: 'date-time' },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' }
+          }
+        },
+        TicketResponse: {
+          type: 'object',
+          properties: {
+            bookingId: { type: 'string', example: '67220b3f81e7d23a104f9d01' },
+            bookingReference: { type: 'string', example: 'BK-20261030-XYZ789' },
+            movieTitle: { type: 'string', example: 'Inception' },
+            theatreName: { type: 'string', example: 'PVR ICON' },
+            screenName: { type: 'string', example: 'Audi 1' },
+            showTime: { type: 'string', format: 'date-time' },
+            seats: {
+              type: 'array',
+              items: { type: 'string', example: 'A1' }
+            },
+            totalSeats: { type: 'integer', example: 2 },
+            status: { type: 'string', example: 'CONFIRMED' },
+            qrToken: { type: 'string' },
+            verificationUrl: {
+              type: 'string',
+              example:
+                'https://api.bookmyshow.example.com/api/v1/bookings/verify/BK-20261030-XYZ789'
+            }
+          }
         }
       }
     }
