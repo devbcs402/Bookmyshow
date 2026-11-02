@@ -69,22 +69,31 @@ export const theatreOwnerRegisterValidation = {
           PASSWORD_REGEX,
           'Password must include uppercase, lowercase, number, and special character'
         ),
-      confirmPassword: z.string().min(1, 'Confirm password is required'),
-      acceptedTerms: z.boolean().refine(val => val === true, {
-        message: 'You must accept the partner terms and conditions'
-      })
+      confirmPassword: z.string().optional(),
+      acceptedTerms: z.boolean().optional().default(true)
     })
-    .refine(data => data.password === data.confirmPassword, {
+    .refine(data => !data.confirmPassword || data.password === data.confirmPassword, {
       message: 'Passwords do not match',
       path: ['confirmPassword']
     })
 };
 
 export const loginValidation = {
-  body: z.object({
-    identifier: z.string().trim().min(1, 'Email or mobile number is required'),
-    password: z.string().min(1, 'Password is required')
-  })
+  body: z
+    .object({
+      identifier: z.string().trim().min(1).optional(),
+      email: z.string().trim().min(1).optional(),
+      phone: z.string().trim().min(1).optional(),
+      password: z.string().min(1, 'Password is required')
+    })
+    .refine(data => data.identifier || data.email || data.phone, {
+      message: 'Email or mobile number is required',
+      path: ['identifier']
+    })
+    .transform(data => ({
+      identifier: (data.identifier || data.email || data.phone).trim(),
+      password: data.password
+    }))
 };
 
 export const refreshTokenValidation = {

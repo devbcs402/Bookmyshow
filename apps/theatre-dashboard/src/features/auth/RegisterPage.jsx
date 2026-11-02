@@ -45,7 +45,11 @@ export function RegisterPage() {
   const onSubmit = async (values) => {
     setServerError('');
     try {
-      await authApi.registerTheatreOwner(values);
+      await authApi.registerTheatreOwner({
+        ...values,
+        confirmPassword: values.password,
+        acceptedTerms: true
+      });
       setIsSuccess(true);
     } catch (err) {
       const msg =

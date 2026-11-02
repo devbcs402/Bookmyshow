@@ -38,9 +38,17 @@ export function ShowPricingPage() {
 
   useEffect(() => {
     // Populate form with existing pricing if already configured
-    if (existingPricing && Array.isArray(existingPricing.pricing)) {
+    const tiersList = Array.isArray(existingPricing)
+      ? existingPricing
+      : Array.isArray(existingPricing?.pricing)
+      ? existingPricing.pricing
+      : Array.isArray(existingPricing?.pricingTiers)
+      ? existingPricing.pricingTiers
+      : [];
+
+    if (tiersList.length > 0) {
       const mapped = {};
-      existingPricing.pricing.forEach((p) => {
+      tiersList.forEach((p) => {
         mapped[p.categoryCode] = p.basePrice;
       });
       setPriceTiers(mapped);
@@ -63,11 +71,13 @@ export function ShowPricingPage() {
 
   const savePricingMutation = useMutation({
     mutationFn: () => {
+      const tiersArray = Object.entries(priceTiers).map(([categoryCode, basePrice]) => ({
+        categoryCode,
+        basePrice: Number(basePrice)
+      }));
       const payload = {
-        pricing: Object.entries(priceTiers).map(([categoryCode, basePrice]) => ({
-          categoryCode,
-          basePrice
-        }))
+        pricingTiers: tiersArray,
+        pricing: tiersArray
       };
       return pricingApi.setShowPricing(showId, payload);
     },
@@ -87,11 +97,13 @@ export function ShowPricingPage() {
   const publishMutation = useMutation({
     mutationFn: async () => {
       // First save pricing, then publish show
+      const tiersArray = Object.entries(priceTiers).map(([categoryCode, basePrice]) => ({
+        categoryCode,
+        basePrice: Number(basePrice)
+      }));
       const payload = {
-        pricing: Object.entries(priceTiers).map(([categoryCode, basePrice]) => ({
-          categoryCode,
-          basePrice
-        }))
+        pricingTiers: tiersArray,
+        pricing: tiersArray
       };
       await pricingApi.setShowPricing(showId, payload);
       return showsApi.publishShow(showId);

@@ -103,10 +103,11 @@ export function ShowFormPage() {
 
   // Automatically calculate end time: startTime + duration + 30 min (intermission + cleaning buffer)
   useEffect(() => {
-    if (watchedStartTime && selectedMovie?.duration) {
+    const movieDuration = selectedMovie?.durationMins || selectedMovie?.duration;
+    if (watchedStartTime && movieDuration) {
       const start = new Date(watchedStartTime);
       if (!isNaN(start.getTime())) {
-        const totalMinutes = selectedMovie.duration + 30; // 30 min buffer
+        const totalMinutes = movieDuration + 30; // 30 min buffer
         const end = new Date(start.getTime() + totalMinutes * 60000);
         setComputedEndTime(end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
       }
@@ -124,6 +125,7 @@ export function ShowFormPage() {
         startTime: new Date(values.startTime).toISOString(),
         format: values.format,
         language: values.language,
+        subtitleLanguage: values.hasSubtitles ? 'English' : 'None',
         subtitles: values.hasSubtitles ? ['English'] : []
       };
       return showsApi.createShow(payload);

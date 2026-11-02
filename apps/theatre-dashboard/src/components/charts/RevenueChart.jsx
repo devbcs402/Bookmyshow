@@ -11,7 +11,7 @@ import {
 import { formatCurrency } from '../../utils/formatters';
 
 export function RevenueChart({ data = [], height = 300 }) {
-  if (!data || data.length === 0) {
+  if (!Array.isArray(data) || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-xs text-slate-500">
         No revenue data recorded for selected period.

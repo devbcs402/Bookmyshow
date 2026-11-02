@@ -39,13 +39,14 @@ export function LoginPage() {
 
   const onSubmit = async data => {
     setFormError(null);
-    // Determine whether input is email or phone
-    const isEmail = data.emailOrPhone.includes('@');
+    const cleanInput = data.emailOrPhone.trim();
+    const isEmail = cleanInput.includes('@');
     const payload = {
+      identifier: cleanInput,
       password: data.password,
       ...(isEmail
-        ? { email: data.emailOrPhone.trim().toLowerCase() }
-        : { phone: data.emailOrPhone.trim() })
+        ? { email: cleanInput.toLowerCase() }
+        : { phone: cleanInput })
     };
 
     const result = await login(payload);

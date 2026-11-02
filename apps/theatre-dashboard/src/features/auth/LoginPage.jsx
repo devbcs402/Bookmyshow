@@ -35,7 +35,8 @@ export function LoginPage() {
   const onSubmit = async (values) => {
     setServerError('');
     try {
-      const response = await authApi.login(values.identifier, values.password);
+      const identifier = values.identifier?.trim();
+      const response = await authApi.login(identifier, values.password);
       const data = response.data || response;
 
       // Ensure user role belongs to theatre administration

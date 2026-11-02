@@ -18,22 +18,15 @@ const startServer = async () => {
       prefix: config.API_PREFIX
     });
 
-    // 1. Establish persistent database connection (Fail-fast if unavailable in production)
+    // 1. Establish persistent database connection (Mandatory for all operations)
     try {
       await connectDatabase();
     } catch (dbError) {
-      if (config.NODE_ENV === 'production') {
-        logger.fatal({
-          msg: 'Database connection failed in production. Halting startup.',
-          error: dbError.message
-        });
-        process.exit(1);
-      } else {
-        logger.warn({
-          msg: 'MongoDB is unavailable in development mode. Proceeding in degraded state.',
-          error: dbError.message
-        });
-      }
+      logger.fatal({
+        msg: 'Database connection failed. Halting startup.',
+        error: dbError.message
+      });
+      process.exit(1);
     }
 
     // 2. Establish in-memory Redis connection

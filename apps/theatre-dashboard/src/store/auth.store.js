@@ -28,6 +28,31 @@ export const Permissions = Object.freeze({
   STAFF_MANAGE: 'STAFF_MANAGE'
 });
 
+export const RolePermissions = Object.freeze({
+  [Roles.SUPER_ADMIN]: Object.values(Permissions),
+  [Roles.THEATRE_OWNER]: Object.values(Permissions),
+  [Roles.THEATRE_MANAGER]: [
+    Permissions.USER_READ,
+    Permissions.MOVIE_READ,
+    Permissions.THEATRE_READ,
+    Permissions.SCREEN_MANAGE,
+    Permissions.SHOW_READ,
+    Permissions.SHOW_CREATE,
+    Permissions.SHOW_UPDATE,
+    Permissions.SHOW_DELETE,
+    Permissions.BOOKING_READ,
+    Permissions.BOOKING_MANAGE,
+    Permissions.STAFF_MANAGE
+  ],
+  [Roles.THEATRE_STAFF]: [
+    Permissions.MOVIE_READ,
+    Permissions.THEATRE_READ,
+    Permissions.SHOW_READ,
+    Permissions.BOOKING_READ,
+    Permissions.BOOKING_MANAGE
+  ]
+});
+
 const STORE_KEY = 'theatre_portal_auth';
 
 const getInitialState = () => {
@@ -96,7 +121,7 @@ export const useAuthStore = create((set, get) => ({
     const { user } = get();
     if (!user) return false;
     if (user.role === Roles.SUPER_ADMIN) return true;
-    const permissions = user.permissions || [];
+    const permissions = user.permissions || RolePermissions[user.role] || [];
     return permissions.includes(permission);
   }
 }));

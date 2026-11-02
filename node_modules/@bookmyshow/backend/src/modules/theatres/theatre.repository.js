@@ -267,11 +267,11 @@ export class TheatreRepository {
   }
 
   static async findCityBySlug(slug) {
-    return City.findOne({ slug: slug.toLowerCase().trim(), isDeleted: false }).lean().exec();
+    return City.findOne({ slug: slug.toLowerCase().trim(), deletedAt: null }).lean().exec();
   }
 
   static async findActiveCities() {
-    return City.find({ isActive: true, isDeleted: false })
+    return City.find({ isActive: true, deletedAt: null })
       .sort({ isTopCity: -1, name: 1 })
       .lean()
       .exec();

@@ -16,7 +16,18 @@ const COLORS = {
 };
 
 export function StatusPieChart({ data = [], height = 300 }) {
-  if (!data || data.length === 0) {
+  // Normalize data whether it is an array or an object map { CONFIRMED: 5, CANCELLED: 2 }
+  let list = [];
+  if (Array.isArray(data)) {
+    list = data;
+  } else if (data && typeof data === 'object') {
+    list = Object.entries(data).map(([key, val]) => ({
+      name: key,
+      value: typeof val === 'number' ? val : val?.count || 0
+    }));
+  }
+
+  if (!list || list.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-xs text-slate-500">
         No booking status data available.
@@ -25,7 +36,7 @@ export function StatusPieChart({ data = [], height = 300 }) {
   }
 
   // Format data: ensure name and count properties exist
-  const formatted = data.map((item) => ({
+  const formatted = list.map((item) => ({
     name: item._id || item.status || item.name || 'UNKNOWN',
     value: item.count || item.value || 0
   }));

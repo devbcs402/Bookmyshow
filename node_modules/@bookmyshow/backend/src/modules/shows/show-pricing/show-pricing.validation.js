@@ -25,9 +25,18 @@ export const pricingTierItemSchema = z.object({
   currency: z.string().trim().max(10).optional().default('INR')
 });
 
-export const setPricingSchema = z.object({
-  pricingTiers: z.array(pricingTierItemSchema).min(1, 'At least one pricing tier must be defined')
-});
+export const setPricingSchema = z
+  .object({
+    pricingTiers: z.array(pricingTierItemSchema).optional(),
+    pricing: z.array(pricingTierItemSchema).optional()
+  })
+  .refine(data => (data.pricingTiers && data.pricingTiers.length > 0) || (data.pricing && data.pricing.length > 0), {
+    message: 'At least one pricing tier must be defined',
+    path: ['pricingTiers']
+  })
+  .transform(data => ({
+    pricingTiers: data.pricingTiers || data.pricing
+  }));
 
 export const updatePricingCategorySchema = z.object({
   categoryName: z.string().trim().max(100).optional(),

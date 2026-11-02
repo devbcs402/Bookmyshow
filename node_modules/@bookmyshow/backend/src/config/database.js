@@ -5,7 +5,8 @@ import logger from './logger.js';
 const connectionOptions = {
   maxPoolSize: 50,
   minPoolSize: 5,
-  serverSelectionTimeoutMS: 5000,
+  serverSelectionTimeoutMS: 10000,
+  connectTimeoutMS: 10000,
   socketTimeoutMS: 45000,
   autoIndex: config.NODE_ENV !== 'production'
 };
@@ -31,16 +32,31 @@ mongoose.connection.on('reconnected', () => {
   logger.info('MongoDB reconnected successfully');
 });
 
-export const connectDatabase = async () => {
-  try {
-    const maskedUri = config.MONGODB_URI.replace(/:([^@]+)@/, ':****@');
-    logger.info({ msg: 'Connecting to MongoDB...', uri: maskedUri });
-
-    await mongoose.connect(config.MONGODB_URI, connectionOptions);
+export const connectDatabase = async (maxAttempts = 3, retryDelayMs = 1500) => {
+  if (mongoose.connection.readyState === 1) {
     return mongoose.connection;
-  } catch (error) {
-    logger.error({ msg: 'CRITICAL: Failed to connect to MongoDB', error: error.message });
-    throw error;
+  }
+
+  const maskedUri = config.MONGODB_URI.replace(/:([^@]+)@/, ':****@');
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      logger.info({ msg: `Connecting to MongoDB (attempt ${attempt}/${maxAttempts})...`, uri: maskedUri });
+      await mongoose.connect(config.MONGODB_URI, connectionOptions);
+      return mongoose.connection;
+    } catch (error) {
+      logger.error({
+        msg: `Failed to connect to MongoDB (attempt ${attempt}/${maxAttempts})`,
+        error: error.message
+      });
+
+      if (attempt < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, retryDelayMs));
+      } else {
+        logger.fatal({ msg: 'CRITICAL: Exhausted all MongoDB connection attempts', error: error.message });
+        throw error;
+      }
+    }
   }
 };
 

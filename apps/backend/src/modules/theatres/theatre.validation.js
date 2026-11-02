@@ -50,21 +50,52 @@ const businessDetailsSchema = z.object({
   businessRegistrationNumber: z.string().trim().max(50).optional().default('')
 });
 
-export const registerTheatreSchema = z.object({
-  name: z.string().trim().min(2, 'Theatre name must be at least 2 characters').max(200),
-  theatreCode: z.string().trim().max(20).optional().default(''),
-  description: z.string().trim().max(2000).optional().default(''),
-  contactEmail: z.string().trim().email('Invalid contact email address'),
-  contactPhone: z.string().trim().min(8, 'Phone number must be at least 8 digits').max(20),
-  websiteUrl: z.string().url('Invalid website URL').optional().or(z.literal('')),
-  address: addressSchema,
-  location: locationSchema,
-  googleMapsUrl: z.string().url('Invalid Google Maps URL').optional().or(z.literal('')),
-  businessDetails: businessDetailsSchema.optional().default({}),
-  media: mediaSchema.optional().default({}),
-  operatingHours: operatingHoursSchema.optional().default({}),
-  amenities: z.array(z.nativeEnum(TheatreAmenities)).optional().default([])
-});
+export const registerTheatreSchema = z
+  .object({
+    name: z.string().trim().min(2, 'Theatre name must be at least 2 characters').max(200),
+    theatreCode: z.string().trim().max(20).optional().default(''),
+    description: z.string().trim().max(2000).optional().default(''),
+    contactEmail: z.string().trim().email('Invalid contact email address'),
+    contactPhone: z.string().trim().min(8, 'Phone number must be at least 8 digits').max(20),
+    websiteUrl: z.string().url('Invalid website URL').optional().or(z.literal('')),
+    address: addressSchema.optional().or(z.string().optional()),
+    location: locationSchema.optional(),
+    city: z.string().optional(),
+    cityId: z.string().optional(),
+    area: z.string().optional(),
+    state: z.string().optional(),
+    pincode: z.string().optional(),
+    googleMapsUrl: z.string().url('Invalid Google Maps URL').optional().or(z.literal('')),
+    businessDetails: businessDetailsSchema.optional().default({}),
+    media: mediaSchema.optional().default({}),
+    operatingHours: operatingHoursSchema.optional().default({}),
+    amenities: z.array(z.nativeEnum(TheatreAmenities)).optional().default([])
+  })
+  .transform((data) => {
+    const defaultCityId = '6ae81b15018772aeb5d64bf0';
+    const addressObj = typeof data.address === 'object' && data.address !== null
+      ? data.address
+      : {
+          street: typeof data.address === 'string' ? data.address : (data.name || 'Main St'),
+          landmark: '',
+          area: data.area || data.city || 'Central Area',
+          cityId: data.cityId || defaultCityId,
+          state: data.state || 'Maharashtra',
+          country: 'India',
+          pincode: data.pincode && /^\d{6}$/.test(data.pincode) ? data.pincode : '400013'
+        };
+
+    const locationObj = data.location || {
+      type: 'Point',
+      coordinates: [72.8258, 18.9953]
+    };
+
+    return {
+      ...data,
+      address: addressObj,
+      location: locationObj
+    };
+  });
 
 export const updateTheatreSchema = z.object({
   name: z.string().trim().min(2).max(200).optional(),
