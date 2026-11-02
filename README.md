@@ -1,5 +1,9 @@
 # Corporate Movie Ticket Booking Platform (BookMyShow Clone)
 
+> [!TIP]
+> **New Developer Onboarding**: Looking for setup instructions, prerequisites, environment setup, and test credentials?
+> Read the complete **[Developer Onboarding & Quick Start Guide](GETTING_STARTED.md)** to get all 4 applications running locally in under 3 minutes.
+
 > **Enterprise Distributed Systems Architecture & Technical Blueprint (Part 1 Deliverable)**
 
 An enterprise-grade, high-concurrency movie ticket booking platform inspired by BookMyShow. The platform is engineered to support multi-city operations, multi-tenant cinema partners, dynamic screen layouts, real-time seat lock synchronization, and secure online payments while maintaining strict inventory invariance (zero double-booking guarantees).
