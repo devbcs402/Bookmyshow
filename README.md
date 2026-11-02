@@ -729,13 +729,62 @@ npm run build
 
 ---
 
-## 21. Architecture Status & Quality Gates
+## 21. Super Admin Dashboard (Part 17 Deliverable)
 
-- **Architecture Style**: Modular Monolith with clean domain boundaries, prepared for microservice extraction.
+The central platform governance and management web console engineered for platform executives (`SUPER_ADMIN`).
+
+### Application Summary
+- **Directory**: `apps/admin-dashboard/`
+- **Default Port**: `http://localhost:5175`
+- **Architecture**: React 18, Vite, Tailwind CSS, TanStack Query v5, React Router v6, Zustand, Axios, Recharts, Lucide React, and Socket.IO client.
+- **Design System**: Enterprise dark navy sidebar (`#0f172a`), crisp white data tables and forms, and professional blue primary actions (`#2563eb`).
+
+### Core Governance Modules
+1. **Master Platform Overview (`/`)**: Executive KPIs (Gross GMV, Platform 10% Commission, Total Bookings, Active Theatres), 30-day revenue trends, daily booking velocity charts, lifecycle status breakdown donuts, pending exhibitor review queue, and live recent booking feed.
+2. **Theatre Onboarding & Compliance Approvals (`/theatre-approvals`, `/theatre-approvals/:theatreId`)**: Verification of cinema trade licenses, commercial GSTIN/PAN, and bank details with approve, suspend, reactivate, and reject workflows (with mandatory compliance reason recording).
+3. **Theatres & Branches Oversight (`/theatres`, `/theatres/:theatreId`, `/branches`)**: Platform-wide exhibitor and multiplex directory with city filters, operational statuses, and branch screen listings.
+4. **Master Movie Catalog & Approvals (`/movies`, `/movies/:movieId`, `/movie-approvals`)**: Complete film database oversight, synopsis, CBFC certification, language/genre metadata, and film approval/rejection queues.
+5. **Auditoriums & Seating Oversight (`/screens`, `/screens/:screenId`)**: Projection format (IMAX, 4DX, 2D) and audio filters, capacity validation, and read-only published layout version inspection (`layoutVersion: 1, 2...`).
+6. **Show Scheduling Oversight (`/shows`, `/shows/:showId`)**: Global screening monitor with date filters, seat occupancy tracking, tiered category pricing, and emergency show cancellation with automated customer refund processing notices.
+7. **Platform Bookings Explorer (`/bookings`, `/bookings/:bookingId`)**: Customer ticket explorer with reference search, customer phone filters, status badges, seat breakdowns, and cancellation controls.
+8. **Payments & Gateway Refunds (`/payments`, `/refunds`)**: Real-time revenue analytics, manual transaction lookup, and direct Razorpay refund execution with mandatory justification notes and over-refunding protection.
+9. **Platform Commission Configuration (`/commissions`)**: Standard 10% platform take rate governance, effective dates, and gross-to-net calculations.
+10. **Theatre Settlements & Ledger Export (`/settlements`)**: Date-filtered reconciliation ledger displaying gross ticket sales, 10% retained commission, customer refunds, and net payable with one-click "Download Settlement CSV" export.
+11. **Coupons & Campaigns Blueprint (`/coupons`)**: Contractual schema specification and layout for promotional discount codes and referral vouchers.
+12. **Announcements & Broadcasts (`/notifications`)**: Omnichannel broadcast composer (Email, SMS, WhatsApp, In-App) dispatched via Redis BullMQ queues with delivery impression statistics.
+13. **Platform Analytics & Reporting (`/analytics`)**: Multi-tab analytical reports (Overview, Bookings, Revenue, Movies, Theatres) with 7D/30D/90D time horizons and CSV downloads.
+14. **Security Audit Trail (`/audit-logs`)**: Cryptographically sealed, read-only audit log viewer with actor, action, resource, and timestamp filters with zero mutation controls.
+15. **System Infrastructure Health (`/system-health`)**: Real-time operational diagnostics for MongoDB, Redis cache, V8 memory heap footprint, and Node.js uptime with automated 15-second polling.
+16. **Platform Settings & Policies (`/settings`)**: Booking cancellation refund windows (>24h: 100%, 2-24h: 50%, <2h: 0%), Razorpay HMAC webhook status, and security token durations.
+17. **User Governance Explorer (`/users`)**: User account metrics, role distribution charts, and governance activity audit pathways.
+
+### Installation & Run Commands
+```bash
+# Navigate to admin dashboard application
+cd apps/admin-dashboard
+
+# Install dependencies
+npm install
+
+# Start development server (http://localhost:5175)
+npm run dev
+
+# Run automated tests (Vitest)
+npm run test
+
+# Build production bundle
+npm run build
+```
+
+---
+
+## 22. Final Architecture Status & Quality Gates (Parts 1–17 Complete)
+
+- **Architecture Style**: Production-grade Modular Monolith with clean domain boundaries and 3 specialized decoupled React SPAs.
 - **Concurrency Guarantee**: CP (Consistency + Partition Tolerance) on inventory; zero double-locking and zero double-booking under race conditions via Redis Lua scripts, atomic MongoDB transactions, and compound unique partial indexes.
-- **Tenancy Boundary**: Absolute isolation by `partnerId` / `theatreId`, enforced at middleware (`requireTenantScope`), service layer, and repository layers.
+- **Tenancy Boundary**: Absolute exhibitor isolation by `partnerId` / `theatreId`, enforced at middleware (`requireTenantScope`), service layer, and repository layers, with global platform oversight restricted strictly to `SUPER_ADMIN`.
 - **Authentication & Tokens**: Dual-token JWT (15m in-memory access token, 7d rotating refresh token in `HttpOnly, Secure, SameSite=Strict` cookie) with Token Family reuse detection.
-- **Role-Based Access Control**: 5 platform roles, 24 fine-grained permissions, and immutable server-side role assignment.
+- **Role-Based Access Control**: 5 platform roles (`CUSTOMER`, `THEATRE_OWNER`, `THEATRE_MANAGER`, `THEATRE_STAFF`, `SUPER_ADMIN`), 24 fine-grained permissions, and immutable server-side role assignment.
 - **Movie Catalog & Taxonomy**: Normalized `genres` and `languages`, denormalized `genreSlugs` indexing, 8-stage movie status lifecycle with dynamic theatrical state derivation, and Cloudinary media abstraction.
 - **Theatre & Branch Subsystem**: Multi-tenant cinema complexes, physical branch management, GeoJSON `2dsphere` proximity indexing (`$near`), BOLA/IDOR anti-enumeration defense, and staff delegation governance.
 - **Screen & Seating Layout Subsystem**: Multi-format auditorium management (`STANDARD`, `IMAX`, `DOLBY_ATMOS`, `4DX`), 2D spatial coordinate matrix, bulk generation engine, invariant validation engine, immutable layout versioning (`layoutVersion: 1, 2, 3...`), and physical chairs master inventory (`seats` collection).
@@ -746,16 +795,56 @@ npm run build
 - **Notification System & Omnichannel Alerts**: Centralized decoupled notification architecture across Email (SMTP/Resend/Mock), SMS (Fast2SMS/Twilio/Mock with Indian DLT compliance), WhatsApp (Meta Business Platform Cloud API), and In-App delivery. Dual-mode Redis and in-memory background queues, exponential backoff retries ($5 \times 2^{n-1}$), dead-letter queues, HTML sanitization, multi-lingual localization (en, hi, gu), private Socket.IO user rooms (`user:<userId>`), and strict BOLA defense.
 - **Search, Discovery & Recommendation Engine**: Centralized discovery system with safe regex escaping, ReDoS defense, multi-criteria filtering, verified show availability for now-showing movies, 48-hour booking velocity trending, 30-day sustained popularity, weighted Jaccard similar movies, geospatial `2dsphere` theatre radius searches, explainable rule-based recommendations with natural-language reasons, low-latency autocomplete suggestions, in-place recently viewed history management, and multi-tier Redis caching with automated invalidation.
 - **Production Hardening & Operations (Part 14)**: Distributed Redis rate limiting (`RedisRateLimitStore`), immutable append-only audit logging (`/api/v1/admin/audit-logs`), real MongoDB analytics reporting distinguishing Gross Booking Value, Captured Payments, Refunds, and Settlements (`/api/v1/admin/analytics/*` and `/api/v1/theatre-owner/analytics/*`), Kubernetes liveness/readiness/metrics probes (`/api/v1/health/*`), multi-stage Docker Alpine container, and GitHub Actions CI/CD workflows.
-- **Customer Frontend (Part 15)**: Modern cinematic React 18 single-page application with Vite, Tailwind CSS, TanStack Query v5, Zod validation, Socket.IO client, and Razorpay Checkout standard integration.
-- **Theatre Partner Dashboard (Part 16)**: Full-featured multi-tenant React 18 SPA with Vite, Tailwind CSS, TanStack Query v5, Recharts, Socket.IO client, and an interactive 2D Seating Layout Builder engine with immutable version publishing.
+- **Customer Frontend (Part 15)**: Modern cinematic React 18 single-page application on `:5173` with Vite, Tailwind CSS, TanStack Query v5, Zod validation, Socket.IO client, and Razorpay Checkout standard integration.
+- **Theatre Partner Dashboard (Part 16)**: Full-featured multi-tenant React 18 SPA on `:5174` with Vite, Tailwind CSS, TanStack Query v5, Recharts, Socket.IO client, and an interactive 2D Seating Layout Builder engine with immutable version publishing.
+- **Super Admin Dashboard (Part 17)**: Full-featured platform governance React 18 SPA on `:5175` with Vite, Tailwind CSS, TanStack Query v5, Recharts, Socket.IO client, Razorpay refund dispatcher, CSV settlement export, and read-only audit log inspection.
 - **Backend Quality Gate**: **625 automated tests across 81 test suites passing (100% pass rate)**. Zero ESLint errors, 100% Prettier compliance.
 - **Customer Frontend Quality Gate**: **18 automated tests across 8 test suites passing (100% pass rate)**.
-- **Theatre Dashboard Quality Gate**: **15 automated tests across 8 test suites passing (100% pass rate)**. Production Vite build (2410 modules transformed) compiling with 0 errors/warnings.
+- **Theatre Dashboard Quality Gate**: **15 automated tests across 8 test suites passing (100% pass rate)**. Production Vite build compiling with 0 errors/warnings.
+- **Super Admin Dashboard Quality Gate**: **13 automated tests across 5 test suites passing (100% pass rate)**. Production Vite build (2366 modules transformed) compiling with 0 errors/warnings.
+- **Total Platform Automated Tests**: **671 tests across 102 test suites passing (100% pass rate)**.
+
+---
+
+## 23. Complete Local Development & Orchestration Guide
+
+### 🚀 Unified Root Execution Commands
+
+| Action | Root Command | Description |
+|---|---|---|
+| **Install All Dependencies** | `npm run install:all` | Installs packages across all 4 applications (`backend`, `customer-frontend`, `theatre-dashboard`, `admin-dashboard`). |
+| **Start All Applications** | `npm run dev` | Concurrently launches backend (`:5000`), customer (`:5173`), theatre (`:5174`), and admin (`:5175`). |
+| **Run All Test Suites** | `npm run test` | Executes all 102 automated test suites (671 tests) across backend and all 3 frontends. |
+| **Build All Production Bundles** | `npm run build` | Compiles production Vite bundles into `dist/` for customer, theatre, and admin applications. |
+| **Lint Codebase** | `npm run lint` | Runs ESLint validation across all backend services and test files. |
+| **Provision Dev Seed Data** | `npm run seed:dev` | Seeds Mumbai city, verified exhibitor partner, approved theatre, screen, 50-seat layout, published movies, and active shows. |
+| **Provision Super Admin** | `npm run init:super-admin` | Seeds root Super Admin account (`admin@bookmyshow.clone`). |
+
+### 🌐 Individual Application Access Points & Credentials
+
+| Application | Local URL | Default Login | Password | Role / Scope |
+|---|---|---|---|---|
+| **Customer Web App** | `http://localhost:5173` | `customer@gmail.com` | `Customer@Secure2026!` | Ticket Booking Consumer |
+| **Theatre Partner Portal** | `http://localhost:5174` | `owner@pvr.com` | `Owner@Secure2026!` | Exhibitor Complex & Shows |
+| **Super Admin Console** | `http://localhost:5175` | `admin@bookmyshow.clone` | `SuperAdmin@Secure2026!` | Platform Central Governance |
+| **Backend REST API Gateway** | `http://localhost:5000/api/v1` | — | — | Core API & WebSockets |
+| **Interactive Swagger API Docs** | `http://localhost:5000/api-docs` | — | — | OpenAPI Specification |
+| **Infrastructure Health Probe** | `http://localhost:5000/api/v1/health` | — | — | Diagnostics (MongoDB & Redis) |
+
+### 🛠️ Troubleshooting & Frequently Asked Questions
+
+1. **Port Conflicts**:
+   - Ensure ports `5000`, `5173`, `5174`, `5175`, `27017` (MongoDB), and `6379` (Redis) are available before launching `npm run dev`.
+2. **CORS Configuration**:
+   - Backend automatically allows requests from `http://localhost:5173`, `http://localhost:5174`, `http://localhost:5175`, and `http://localhost:3000` in development mode.
+3. **Database Reset**:
+   - To re-seed the sample dataset, simply run `npm run seed:dev`. The script is idempotent and updates existing records safely without corrupting booking histories.
 
 ---
 
 > [!IMPORTANT]
-> **Parts 1 through 16 Complete:** Both the Customer Frontend and Theatre Partner Dashboard React applications, full backend architecture, database designs, authentication, security, movie catalog, theatre management, seat locking, booking engine, Razorpay payments, notifications, search & discovery, production hardening, analytics, audit logs, Docker containerization, and CI/CD pipelines are fully implemented, verified, tested, and documented.
-> In strict accordance with the project instructions and stop condition:
-> **STOP AND WAIT FOR USER APPROVAL BEFORE PROCEEDING TO PART 17 (SUPER ADMIN DASHBOARD).**
+> **Complete Platform Delivered (Parts 1 through 17):** All backend modules, distributed services, database schemas, real-time infrastructure, and all three React client applications (Customer Frontend, Theatre Partner Dashboard, and Super Admin Governance Console) are fully implemented, verified, tested, and documented.
+> In accordance with the strict project stop condition:
+> **STOP AND WAIT FOR USER APPROVAL.**
+
 

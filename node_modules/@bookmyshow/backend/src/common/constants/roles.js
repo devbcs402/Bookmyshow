@@ -1,0 +1,9 @@
+export const Roles = Object.freeze({
+  CUSTOMER: 'CUSTOMER',
+  THEATRE_OWNER: 'THEATRE_OWNER',
+  THEATRE_MANAGER: 'THEATRE_MANAGER',
+  THEATRE_STAFF: 'THEATRE_STAFF',
+  SUPER_ADMIN: 'SUPER_ADMIN'
+});
+
+export default Roles;

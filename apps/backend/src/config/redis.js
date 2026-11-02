@@ -11,6 +11,10 @@ export const getRedisClient = () => {
       maxRetriesPerRequest: 3,
       enableReadyCheck: true,
       retryStrategy(times) {
+        if (config.NODE_ENV !== 'production' && times > 1) {
+          logger.warn({ msg: 'Redis is not available in development. Continuing in degraded state.' });
+          return null;
+        }
         const delay = Math.min(times * 100, 3000);
         logger.warn({ msg: 'Redis reconnecting...', attempt: times, delayMs: delay });
         return delay;

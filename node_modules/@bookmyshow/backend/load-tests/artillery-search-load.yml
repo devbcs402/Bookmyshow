@@ -1,0 +1,29 @@
+config:
+  target: 'http://localhost:5000/api/v1'
+  phases:
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 50
+      name: 'Ramp-up to warm search cache'
+    - duration: 120
+      arrivalRate: 50
+      name: 'Sustained search peak traffic'
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - name: 'Movie Discovery and Search Auto-Complete Flow'
+    flow:
+      - get:
+          url: '/movies?page=1&limit=10'
+      - think: 1
+      - get:
+          url: '/search/suggestions?q=int'
+      - think: 1
+      - get:
+          url: '/movies?genre=Sci-Fi&language=English'
+      - think: 2
+      - get:
+          url: '/recommendations'
+

@@ -1,0 +1,32 @@
+config:
+  target: 'http://localhost:5000/api/v1'
+  phases:
+    - duration: 30
+      arrivalRate: 20
+      rampTo: 100
+      name: 'High-Concurrency Blockbuster Seat Rush'
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - name: 'Concurrent Seat Availability & Locking'
+    flow:
+      - get:
+          url: '/shows/65f1a2b3c4d5e6f7a8b9c0s1/seats'
+      - think: 0.5
+      - post:
+          url: '/shows/65f1a2b3c4d5e6f7a8b9c0s1/seat-locks'
+          json:
+            seatIds:
+              - '65f1a2b3c4d5e6f7a8b9c011'
+              - '65f1a2b3c4d5e6f7a8b9c012'
+          capture:
+            - json: '$.data.lockToken'
+              as: 'lockToken'
+      - think: 2
+      - patch:
+          url: '/shows/65f1a2b3c4d5e6f7a8b9c0s1/seat-locks/renew'
+          json:
+            lockToken: '{{ lockToken }}'
+
